@@ -1,0 +1,636 @@
+{
+  "id": "com.insteon",
+  "version": "1.6.0",
+  "compatibility": ">=12.2.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Insteon for Homey",
+    "nl": "Insteon voor Homey",
+    "de": "Insteon für Homey",
+    "es": "Insteon para Homey",
+    "fr": "Insteon pour Homey"
+  },
+  "description": {
+    "en": "Control Insteon devices via Insteon Hub 2245/2242",
+    "nl": "Bedien Insteon-apparaten via Insteon Hub 2245/2242",
+    "de": "Steuern Sie Insteon-Geräte über Insteon Hub 2245/2242",
+    "es": "Controla dispositivos Insteon a través de Insteon Hub 2245/2242",
+    "fr": "Contrôlez les appareils Insteon via Insteon Hub 2245/2242"
+  },
+  "category": [
+    "lights",
+    "security"
+  ],
+  "permissions": [],
+  "brandColor": "#0066CC",
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Insteon for Homey Development Team",
+    "email": "support@insteon-homey.com"
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Chris Wilson (@cwwilson08)",
+        "role": "Original Hubitat Groovy drivers (Insteon-Hubitat repository)"
+      },
+      {
+        "name": "Claude (Anthropic AI Assistant)",
+        "role": "Complete app development v1.0.0-v1.5.2: Groovy to Homey SDK 3 conversion, architecture design, all features and drivers"
+      }
+    ]
+  },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "insteonhomey"
+      }
+    }
+  },
+  "homeyCommunityTopicId": 0,
+  "source": "https://github.com/yourusername/com.insteon",
+  "support": "https://github.com/yourusername/com.insteon/issues",
+  "homepage": "https://github.com/yourusername/com.insteon",
+  "extra": {
+    "development": {
+      "original_platform": "Hubitat Elevation",
+      "conversion_by": "Claude (Anthropic AI)",
+      "conversion_date": "2025-02-12",
+      "original_authors": [
+        "cwwilson08 (Groovy drivers)",
+        "Chris Wilson (Node.js server)"
+      ],
+      "notes": "Converted from Groovy/Node.js Hubitat integration to unified Homey app. Combines parent/child driver architecture with WebSocket server for real-time Insteon device control."
+    }
+  },
+  "drivers": [
+    {
+      "id": "insteon-dimmer",
+      "name": {
+        "en": "Insteon Dimmer/Light",
+        "nl": "Insteon Dimmer/Lamp",
+        "de": "Insteon Dimmer/Licht",
+        "es": "Insteon Regulador/Luz",
+        "fr": "Insteon Variateur/Lumière"
+      },
+      "class": "light",
+      "capabilities": [
+        "onoff",
+        "dim"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/insteon-dimmer/assets/images/small.png",
+        "large": "/drivers/insteon-dimmer/assets/images/large.png",
+        "xlarge": "/drivers/insteon-dimmer/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "configure_device",
+          "template": "list_devices",
+          "navigation": {
+            "next": "done"
+          }
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Device Settings",
+            "nl": "Apparaatinstellingen",
+            "de": "Geräteeinstellungen",
+            "es": "Configuración del dispositivo",
+            "fr": "Paramètres de l'appareil"
+          },
+          "children": [
+            {
+              "id": "deviceID",
+              "type": "text",
+              "label": {
+                "en": "Insteon Device ID",
+                "nl": "Insteon Apparaat-ID",
+                "de": "Insteon Geräte-ID",
+                "es": "ID de dispositivo Insteon",
+                "fr": "ID d'appareil Insteon"
+              },
+              "value": "",
+              "hint": {
+                "en": "6-character Insteon ID (e.g., 45ED1C)",
+                "nl": "6-tekens Insteon-ID (bijv. 45ED1C)",
+                "de": "6-stellige Insteon-ID (z.B. 45ED1C)",
+                "es": "ID de Insteon de 6 caracteres (p. ej., 45ED1C)",
+                "fr": "ID Insteon à 6 caractères (par exemple, 45ED1C)"
+              }
+            },
+            {
+              "id": "fastCommands",
+              "type": "checkbox",
+              "label": {
+                "en": "Use Fast ON/OFF",
+                "nl": "Gebruik Snel AAN/UIT",
+                "de": "Schnell EIN/AUS verwenden",
+                "es": "Usar Encendido/Apagado rápido",
+                "fr": "Utiliser Marche/Arrêt rapide"
+              },
+              "value": false,
+              "hint": {
+                "en": "Use Insteon fast commands for quicker response",
+                "nl": "Gebruik Insteon snelle commando's voor snellere reactie",
+                "de": "Verwenden Sie Insteon-Schnellbefehle für schnellere Reaktion",
+                "es": "Use comandos rápidos de Insteon para una respuesta más rápida",
+                "fr": "Utilisez les commandes rapides Insteon pour une réponse plus rapide"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "insteon-switch",
+      "name": {
+        "en": "Insteon Switch",
+        "nl": "Insteon Schakelaar",
+        "de": "Insteon Schalter",
+        "es": "Interruptor Insteon",
+        "fr": "Interrupteur Insteon"
+      },
+      "class": "light",
+      "capabilities": [
+        "onoff"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/insteon-switch/assets/images/small.png",
+        "large": "/drivers/insteon-switch/assets/images/large.png",
+        "xlarge": "/drivers/insteon-switch/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "configure_device",
+          "template": "list_devices",
+          "navigation": {
+            "next": "done"
+          }
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Device Settings",
+            "nl": "Apparaatinstellingen",
+            "de": "Geräteeinstellungen",
+            "es": "Configuración del dispositivo",
+            "fr": "Paramètres de l'appareil"
+          },
+          "children": [
+            {
+              "id": "deviceID",
+              "type": "text",
+              "label": {
+                "en": "Insteon Device ID",
+                "nl": "Insteon Apparaat-ID",
+                "de": "Insteon Geräte-ID",
+                "es": "ID de dispositivo Insteon",
+                "fr": "ID d'appareil Insteon"
+              },
+              "value": "",
+              "hint": {
+                "en": "6-character Insteon ID (e.g., 45ED1C)",
+                "nl": "6-tekens Insteon-ID (bijv. 45ED1C)",
+                "de": "6-stellige Insteon-ID (z.B. 45ED1C)",
+                "es": "ID de Insteon de 6 caracteres (p. ej., 45ED1C)",
+                "fr": "ID Insteon à 6 caractères (par exemple, 45ED1C)"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "insteon-contact",
+      "name": {
+        "en": "Insteon Contact Sensor",
+        "nl": "Insteon Contactsensor",
+        "de": "Insteon Kontaktsensor",
+        "es": "Sensor de contacto Insteon",
+        "fr": "Capteur de contact Insteon"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "alarm_contact"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/insteon-contact/assets/images/small.png",
+        "large": "/drivers/insteon-contact/assets/images/large.png",
+        "xlarge": "/drivers/insteon-contact/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "configure_device",
+          "template": "list_devices",
+          "navigation": {
+            "next": "done"
+          }
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Device Settings",
+            "nl": "Apparaatinstellingen",
+            "de": "Geräteeinstellungen",
+            "es": "Configuración del dispositivo",
+            "fr": "Paramètres de l'appareil"
+          },
+          "children": [
+            {
+              "id": "deviceID",
+              "type": "text",
+              "label": {
+                "en": "Insteon Device ID",
+                "nl": "Insteon Apparaat-ID",
+                "de": "Insteon Geräte-ID",
+                "es": "ID de dispositivo Insteon",
+                "fr": "ID d'appareil Insteon"
+              },
+              "value": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "insteon-leak",
+      "name": {
+        "en": "Insteon Leak Sensor",
+        "nl": "Insteon Leksensor",
+        "de": "Insteon Leckagesensor",
+        "es": "Sensor de fugas Insteon",
+        "fr": "Capteur de fuite Insteon"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "alarm_water"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/insteon-leak/assets/images/small.png",
+        "large": "/drivers/insteon-leak/assets/images/large.png",
+        "xlarge": "/drivers/insteon-leak/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "configure_device",
+          "template": "list_devices",
+          "navigation": {
+            "next": "done"
+          }
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Device Settings",
+            "nl": "Apparaatinstellingen",
+            "de": "Geräteeinstellungen",
+            "es": "Configuración del dispositivo",
+            "fr": "Paramètres de l'appareil"
+          },
+          "children": [
+            {
+              "id": "deviceID",
+              "type": "text",
+              "label": {
+                "en": "Insteon Device ID",
+                "nl": "Insteon Apparaat-ID",
+                "de": "Insteon Geräte-ID",
+                "es": "ID de dispositivo Insteon",
+                "fr": "ID d'appareil Insteon"
+              },
+              "value": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "insteon-motion",
+      "name": {
+        "en": "Insteon Motion Sensor",
+        "nl": "Insteon Bewegingssensor",
+        "de": "Insteon Bewegungssensor",
+        "es": "Sensor de movimiento Insteon",
+        "fr": "Capteur de mouvement Insteon"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "alarm_motion"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/insteon-motion/assets/images/small.png",
+        "large": "/drivers/insteon-motion/assets/images/large.png",
+        "xlarge": "/drivers/insteon-motion/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "configure_device",
+          "template": "list_devices",
+          "navigation": {
+            "next": "done"
+          }
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Device Settings",
+            "nl": "Apparaatinstellingen",
+            "de": "Geräteeinstellungen",
+            "es": "Configuración del dispositivo",
+            "fr": "Paramètres de l'appareil"
+          },
+          "children": [
+            {
+              "id": "deviceID",
+              "type": "text",
+              "label": {
+                "en": "Insteon Device ID",
+                "nl": "Insteon Apparaat-ID",
+                "de": "Insteon Geräte-ID",
+                "es": "ID de dispositivo Insteon",
+                "fr": "ID d'appareil Insteon"
+              },
+              "value": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "insteon-scene",
+      "name": {
+        "en": "Insteon Scene",
+        "nl": "Insteon Scène",
+        "de": "Insteon Szene",
+        "es": "Escena Insteon",
+        "fr": "Scène Insteon"
+      },
+      "class": "button",
+      "capabilities": [
+        "onoff"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/insteon-scene/assets/images/small.png",
+        "large": "/drivers/insteon-scene/assets/images/large.png",
+        "xlarge": "/drivers/insteon-scene/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Scene Settings",
+            "nl": "Scène-instellingen",
+            "de": "Szeneneinstellungen",
+            "es": "Configuración de escena",
+            "fr": "Paramètres de scène"
+          },
+          "children": [
+            {
+              "id": "sceneNumber",
+              "type": "number",
+              "label": {
+                "en": "Scene Number",
+                "nl": "Scènenummer",
+                "de": "Szenennummer",
+                "es": "Número de escena",
+                "fr": "Numéro de scène"
+              },
+              "value": 0,
+              "min": 1,
+              "max": 255,
+              "hint": {
+                "en": "Insteon scene number (1-255)",
+                "nl": "Insteon scènenummer (1-255)",
+                "de": "Insteon Szenennummer (1-255)",
+                "es": "Número de escena Insteon (1-255)",
+                "fr": "Numéro de scène Insteon (1-255)"
+              }
+            },
+            {
+              "id": "fastCommands",
+              "type": "checkbox",
+              "label": {
+                "en": "Use Fast ON/OFF",
+                "nl": "Gebruik Snelle AAN/UIT",
+                "de": "Schnelles EIN/AUS verwenden",
+                "es": "Usar Encendido/Apagado rápido",
+                "fr": "Utiliser Marche/Arrêt rapide"
+              },
+              "value": false,
+              "hint": {
+                "en": "Enable fast ON/OFF commands for this scene",
+                "nl": "Schakel snelle AAN/UIT-opdrachten in voor deze scène",
+                "de": "Schnelle EIN/AUS-Befehle für diese Szene aktivieren",
+                "es": "Habilitar comandos rápidos de encendido/apagado para esta escena",
+                "fr": "Activer les commandes Marche/Arrêt rapides pour cette scène"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "capabilities": {},
+  "signals": {},
+  "flow": {
+    "actions": [
+      {
+        "id": "turn_on_scene",
+        "title": {
+          "en": "Turn on scene",
+          "nl": "Schakel scène in",
+          "de": "Szene einschalten",
+          "es": "Encender escena",
+          "fr": "Allumer la scène"
+        },
+        "titleFormatted": {
+          "en": "Turn on scene [[number]]",
+          "nl": "Schakel scène [[number]] in",
+          "de": "Szene [[number]] einschalten",
+          "es": "Encender escena [[number]]",
+          "fr": "Allumer la scène [[number]]"
+        },
+        "args": [
+          {
+            "name": "number",
+            "type": "number",
+            "min": 1,
+            "max": 255,
+            "placeholder": {
+              "en": "Scene number",
+              "nl": "Scènenummer",
+              "de": "Szenennummer",
+              "es": "Número de escena",
+              "fr": "Numéro de scène"
+            }
+          }
+        ]
+      },
+      {
+        "id": "turn_off_scene",
+        "title": {
+          "en": "Turn off scene",
+          "nl": "Schakel scène uit",
+          "de": "Szene ausschalten",
+          "es": "Apagar escena",
+          "fr": "Éteindre la scène"
+        },
+        "titleFormatted": {
+          "en": "Turn off scene [[number]]",
+          "nl": "Schakel scène [[number]] uit",
+          "de": "Szene [[number]] ausschalten",
+          "es": "Apagar escena [[number]]",
+          "fr": "Éteindre la scène [[number]]"
+        },
+        "args": [
+          {
+            "name": "number",
+            "type": "number",
+            "min": 1,
+            "max": 255,
+            "placeholder": {
+              "en": "Scene number",
+              "nl": "Scènenummer",
+              "de": "Szenennummer",
+              "es": "Número de escena",
+              "fr": "Numéro de scène"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Insteon Hub Settings</title>
+    <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .field-group {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        .field-group h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .field {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input[type="number"] {
+            width: 150px;
+        }
+        .hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .save-button {
+            background: #00A5FF;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .save-button:hover {
+            background: #0090DD;
+        }
+        .save-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #1.6.04;
+            display: block;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h2>Insteon Hub Configuration</h2>
+    
+    <div class="field-group">
+        <h3>Hub Connection</h3>
+        
+        <div class="field">
+            <label for="hubHost">Hub IP Address</label>
+            <input type="text" id="hubHost" placeholder="192.168.1.55">
+            <div class="hint">IP address of your Insteon hub</div>
+        </div>
+        
+        <div class="field">
+            <label for="hubPort">Hub Port</label>
+            <input type="number" id="hubPort" value="25105" min="1" max="65535">
+            <div class="hint">TCP port for hub communication (default: 25105)</div>
+        </div>
+        
+        <div class="field">
+            <label for="hubUser">Hub Username <span id="userRequired" style="color: #d32f2f;">*</span></label>
+            <input type="text" id="hubUser" placeholder="username">
+            <div class="hint" id="userHint">Username from hub settings</div>
+        </div>
+        
+        <div class="field">
+            <label for="hubPass">Hub Password <span id="passRequired" style="color: #d32f2f;">*</span></label>
+            <input type="password" id="hubPass" placeholder="password">
+            <div class="hint" id="passHint">Password from hub settings</div>
+        </div>
+        
+        <div class="field">
+            <label for="hubModel">Hub Model</label>
+            <select id="hubModel">
+                <option value="2245">Insteon Hub 2245</option>
+                <option value="2242">Insteon Hub 2242</option>
+            </select>
+            <div class="hint">Your Insteon hub model number</div>
+        </div>
+    </div>
+    
+    <div class="field-group">
+        <h3>Advanced Settings</h3>
+        
+        <div class="field">
+            <label for="wsPort">WebSocket Port</label>
+            <input type="number" id="wsPort" value="8080" min="1024" max="65535">
+            <div class="hint">WebSocket server port for external connections (default: 8080)</div>
+        </div>
+    </div>
+    
+    <div class="field-group">
+        <h3>Debug Logging</h3>
+        
+        <div class="field">
+            <label>
+                <input type="checkbox" id="debugLogging">
+                Enable Debug Logging
+            </label>
+            <div class="hint">Show detailed event listener and command logs below</div>
+        </div>
+        
+        <div id="debugLogContainer" style="display: none;">
+            <div class="field">
+                <label for="debugLog">Debug Log</label>
+                <textarea id="debugLog" readonly style="width: 100%; height: 400px; font-family: monospace; font-size: 12px; background: #1e1e1e; color: #d4d4d4; padding: 10px; border: 1px solid #444; border-radius: 4px;"></textarea>
+            </div>
+            
+            <button type="button" id="clearLogButton" style="background: #666; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                Clear Logs
+            </button>
+        </div>
+    </div>
+    
+    <button class="save-button" id="saveButton">Save Settings</button>
+    
+    <div class="status" id="status"></div>
+
+    <script>
+        let homeyReady = false;
+        
+        // Wait for Homey to be ready
+        function onHomeyReady(Homey) {
+            homeyReady = true;
+            Homey.ready();
+            loadSettings(Homey);
+            
+            // Save button click handler
+            document.getElementById('saveButton').addEventListener('click', () => {
+                saveSettings(Homey);
+            });
+            
+            // Clear logs button
+            document.getElementById('clearLogButton').addEventListener('click', () => {
+                document.getElementById('debugLog').value = '';
+                lastLogLength = 0;
+                Homey.set('debugLog', [], (err) => {
+                    if (!err) {
+                        appendLog('Logs cleared');
+                    }
+                });
+            });
+            
+            // Debug logging checkbox
+            document.getElementById('debugLogging').addEventListener('change', (e) => {
+                const logContainer = document.getElementById('debugLogContainer');
+                
+                Homey.set('debugLogging', e.target.checked, (err) => {
+                    if (!err) {
+                        if (e.target.checked) {
+                            // Show log container
+                            logContainer.style.display = 'block';
+                            
+                            // Clear existing log
+                            Homey.set('debugLog', [], () => {
+                                appendLog('========================================');
+                                appendLog('Insteon for Homey: 1.2.1');
+                                appendLog('========================================');
+                                // Start polling
+                                startLogPolling(Homey);
+                            });
+                        } else {
+                            // Hide log container
+                            logContainer.style.display = 'none';
+                            
+                            // Stop polling
+                            stopLogPolling();
+                        }
+                    }
+                });
+            });
+            
+            // Start polling if debug logging is enabled
+            const debugEnabled = document.getElementById('debugLogging').checked;
+            if (debugEnabled) {
+                document.getElementById('debugLogContainer').style.display = 'block';
+                startLogPolling(Homey);
+            }
+            
+            // Setup hub model change handler
+            setupHubModelHandler();
+        }
+        
+        // Handle hub model selection changes
+        function setupHubModelHandler() {
+            const hubModelSelect = document.getElementById('hubModel');
+            const userRequired = document.getElementById('userRequired');
+            const passRequired = document.getElementById('passRequired');
+            const userHint = document.getElementById('userHint');
+            const passHint = document.getElementById('passHint');
+            
+            function updateCredentialFields() {
+                const hubModel = hubModelSelect.value;
+                
+                if (hubModel === '2242') {
+                    // 2242: Credentials optional
+                    userRequired.style.display = 'none';
+                    passRequired.style.display = 'none';
+                    userHint.textContent = 'Optional - only for updated 2242 hubs with security';
+                    passHint.textContent = 'Optional - only for updated 2242 hubs with security';
+                } else {
+                    // 2245: Credentials required
+                    userRequired.style.display = 'inline';
+                    passRequired.style.display = 'inline';
+                    userHint.textContent = 'Required - username from hub settings';
+                    passHint.textContent = 'Required - password from hub settings';
+                }
+            }
+            
+            // Run on load
+            updateCredentialFields();
+            
+            // Run on change
+            hubModelSelect.addEventListener('change', updateCredentialFields);
+        }
+        
+        let logPollInterval = null;
+        let lastLogLength = 0;
+        
+        // Start polling for log updates
+        function startLogPolling(Homey) {
+            stopLogPolling(); // Clear any existing interval
+            
+            logPollInterval = setInterval(() => {
+                Homey.get('debugLog', (err, messages) => {
+                    if (!err && messages && Array.isArray(messages)) {
+                        // Only update if there are new messages
+                        if (messages.length > lastLogLength) {
+                            const newMessages = messages.slice(lastLogLength);
+                            newMessages.forEach(msg => {
+                                appendLogRaw(msg);
+                            });
+                            lastLogLength = messages.length;
+                        }
+                    }
+                });
+            }, 500); // Poll every 500ms
+        }
+        
+        // Stop polling
+        function stopLogPolling() {
+            if (logPollInterval) {
+                clearInterval(logPollInterval);
+                logPollInterval = null;
+            }
+        }
+        
+        // Append log message with timestamp
+        function appendLog(message) {
+            const logArea = document.getElementById('debugLog');
+            const timestamp = new Date().toISOString().substr(11, 12);
+            logArea.value += `[${timestamp}] ${message}\n`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+        
+        // Append raw log message (already has timestamp)
+        function appendLogRaw(message) {
+            const logArea = document.getElementById('debugLog');
+            logArea.value += `${message}\n`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+        
+        // Load current settings
+        function loadSettings(Homey) {
+            Homey.get('hubHost', (err, value) => {
+                if (!err && value) document.getElementById('hubHost').value = value;
+            });
+            
+            Homey.get('hubPort', (err, value) => {
+                if (!err && value) document.getElementById('hubPort').value = value;
+            });
+            
+            Homey.get('hubUser', (err, value) => {
+                if (!err && value) document.getElementById('hubUser').value = value;
+            });
+            
+            Homey.get('hubPass', (err, value) => {
+                if (!err && value) document.getElementById('hubPass').value = value;
+            });
+            
+            Homey.get('hubModel', (err, value) => {
+                if (!err && value) document.getElementById('hubModel').value = value;
+            });
+            
+            Homey.get('wsPort', (err, value) => {
+                if (!err && value) document.getElementById('wsPort').value = value;
+            });
+            
+            Homey.get('debugLogging', (err, value) => {
+                if (!err && value) {
+                    document.getElementById('debugLogging').checked = true;
+                    // Show the log container
+                    document.getElementById('debugLogContainer').style.display = 'block';
+                    
+                    // Load existing log messages
+                    Homey.get('debugLog', (err, messages) => {
+                        if (!err && messages && Array.isArray(messages)) {
+                            messages.forEach(msg => {
+                                appendLogRaw(msg);
+                            });
+                            lastLogLength = messages.length;
+                        } else {
+                            // Initialize with version banner
+                            appendLog('========================================');
+                            appendLog('Insteon for Homey: 1.6.0');
+                            appendLog('========================================');
+                        }
+                        
+                        // Start polling
+                        startLogPolling(Homey);
+                    });
+                }
+            });
+        }
+        
+        // Save settings
+        function saveSettings(Homey) {
+            const button = document.getElementById('saveButton');
+            const status = document.getElementById('status');
+            
+            button.disabled = true;
+            button.textContent = 'Saving...';
+            status.className = 'status';
+            status.style.display = 'none';
+            
+            const settings = {
+                hubHost: document.getElementById('hubHost').value,
+                hubPort: parseInt(document.getElementById('hubPort').value),
+                hubUser: document.getElementById('hubUser').value,
+                hubPass: document.getElementById('hubPass').value,
+                hubModel: document.getElementById('hubModel').value,
+                wsPort: parseInt(document.getElementById('wsPort').value)
+            };
+            
+            // Validate - username/password required for 2245, optional for 2242
+            if (!settings.hubHost) {
+                status.className = 'status error';
+                status.textContent = 'Please enter Hub IP Address';
+                button.disabled = false;
+                button.textContent = 'Save Settings';
+                return;
+            }
+            
+            if (settings.hubModel === '2245' && (!settings.hubUser || !settings.hubPass)) {
+                status.className = 'status error';
+                status.textContent = 'Hub 2245 requires username and password';
+                button.disabled = false;
+                button.textContent = 'Save Settings';
+                return;
+            }
+            
+            // Save each setting
+            let saved = 0;
+            let toSave = Object.keys(settings).length;
+            
+            Object.keys(settings).forEach(key => {
+                Homey.set(key, settings[key], (err) => {
+                    saved++;
+                    if (saved === toSave) {
+                        if (err) {
+                            status.className = 'status error';
+                            status.textContent = 'Error saving settings: ' + err;
+                        } else {
+                            status.className = 'status success';
+                            status.textContent = 'Settings saved successfully! The app will restart to apply changes.';
+                            
+                            // Trigger app restart via API
+                            Homey.api('POST', '/restart', (err) => {
+                                if (err) console.error('Failed to restart app:', err);
+                            });
+                        }
+                        button.disabled = false;
+                        button.textContent = 'Save Settings';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
