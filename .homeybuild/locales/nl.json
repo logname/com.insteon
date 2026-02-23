@@ -1,0 +1,63 @@
+{
+  "settings": {
+    "title": "Insteon Hub Instellingen",
+    "hubHost": "Hub IP-adres",
+    "hubPort": "Hub Poort",
+    "hubUser": "Hub Gebruikersnaam",
+    "hubPass": "Hub Wachtwoord",
+    "hubModel": "Hub Model",
+    "wsPort": "WebSocket Poort",
+    "description": {
+      "hubHost": "IP-adres van uw Insteon hub",
+      "hubPort": "TCP-poort voor hubcommunicatie (standaard: 25105)",
+      "hubUser": "Gebruikersnaam uit hub-instellingen",
+      "hubPass": "Wachtwoord uit hub-instellingen",
+      "hubModel": "Hub model (2245 of 2242)",
+      "wsPort": "WebSocket serverpoort voor externe verbindingen (standaard: 8080)"
+    }
+  },
+  "errors": {
+    "hub_not_connected": "Niet verbonden met Insteon hub",
+    "command_failed": "Kan commando niet uitvoeren",
+    "invalid_device_id": "Ongeldige Insteon apparaat-ID",
+    "device_not_found": "Apparaat niet gevonden op hub"
+  },
+  "pair": {
+    "title": "Insteon Apparaat Toevoegen",
+    "description": "Voer de Insteon apparaat-ID en configuratie in"
+  },
+  "repair": {
+    "title": "Insteon Apparaat Configureren",
+    "description": "Apparaatinstellingen bijwerken"
+  },
+  "drivers": {
+    "insteon-dimmer": {
+      "pair": {
+        "placeholder_name": "Nieuwe Insteon Dimmer (Configureer Apparaat-ID in Instellingen)"
+      }
+    },
+    "insteon-switch": {
+      "pair": {
+        "placeholder_name": "Nieuwe Insteon Schakelaar (Configureer Apparaat-ID in Instellingen)"
+      }
+    },
+    "insteon-contact": {
+      "pair": {
+        "placeholder_name": "Nieuwe Insteon Contactsensor (Configureer Apparaat-ID in Instellingen)"
+      }
+    },
+    "insteon-leak": {
+      "pair": {
+        "placeholder_name": "Nieuwe Insteon Leksensor (Configureer Apparaat-ID in Instellingen)"
+      }
+    },
+    "insteon-motion": {
+      "pair": {
+        "placeholder_name": "Nieuwe Insteon Bewegingssensor (Configureer Apparaat-ID in Instellingen)"
+      }
+    }
+  },
+  "device": {
+    "not_configured": "Apparaat niet geconfigureerd. Voer Insteon Apparaat-ID in via apparaatinstellingen."
+  }
+}

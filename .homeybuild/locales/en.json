@@ -1,0 +1,63 @@
+{
+  "settings": {
+    "title": "Insteon Hub Settings",
+    "hubHost": "Hub IP Address",
+    "hubPort": "Hub Port",
+    "hubUser": "Hub Username",
+    "hubPass": "Hub Password",
+    "hubModel": "Hub Model",
+    "wsPort": "WebSocket Port",
+    "description": {
+      "hubHost": "IP address of your Insteon hub",
+      "hubPort": "TCP port for hub communication (default: 25105)",
+      "hubUser": "Username from hub settings",
+      "hubPass": "Password from hub settings",
+      "hubModel": "Hub model (2245 or 2242)",
+      "wsPort": "WebSocket server port for external connections (default: 8080)"
+    }
+  },
+  "errors": {
+    "hub_not_connected": "Not connected to Insteon hub",
+    "command_failed": "Failed to execute command",
+    "invalid_device_id": "Invalid Insteon device ID",
+    "device_not_found": "Device not found on hub"
+  },
+  "pair": {
+    "title": "Add Insteon Device",
+    "description": "Enter the Insteon device ID and configuration"
+  },
+  "repair": {
+    "title": "Configure Insteon Device",
+    "description": "Update device settings"
+  },
+  "drivers": {
+    "insteon-dimmer": {
+      "pair": {
+        "placeholder_name": "New Insteon Dimmer (Configure Device ID in Settings)"
+      }
+    },
+    "insteon-switch": {
+      "pair": {
+        "placeholder_name": "New Insteon Switch (Configure Device ID in Settings)"
+      }
+    },
+    "insteon-contact": {
+      "pair": {
+        "placeholder_name": "New Insteon Contact Sensor (Configure Device ID in Settings)"
+      }
+    },
+    "insteon-leak": {
+      "pair": {
+        "placeholder_name": "New Insteon Leak Sensor (Configure Device ID in Settings)"
+      }
+    },
+    "insteon-motion": {
+      "pair": {
+        "placeholder_name": "New Insteon Motion Sensor (Configure Device ID in Settings)"
+      }
+    }
+  },
+  "device": {
+    "not_configured": "Device not configured. Please enter Insteon Device ID in device settings."
+  }
+}
