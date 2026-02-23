@@ -1,24 +1,24 @@
 {
   "id": "com.insteon",
-  "version": "1.6.0",
+  "version": "1.6.2",
   "compatibility": ">=12.2.0",
   "sdk": 3,
   "platforms": [
     "local"
   ],
   "name": {
-    "en": "Insteon for Homey",
-    "nl": "Insteon voor Homey",
-    "de": "Insteon für Homey",
-    "es": "Insteon para Homey",
-    "fr": "Insteon pour Homey"
+    "en": "Insteon",
+    "nl": "Insteon",
+    "de": "Insteon",
+    "es": "Insteon",
+    "fr": "Insteon"
   },
   "description": {
-    "en": "Control Insteon devices via Insteon Hub 2245/2242",
-    "nl": "Bedien Insteon-apparaten via Insteon Hub 2245/2242",
-    "de": "Steuern Sie Insteon-Geräte über Insteon Hub 2245/2242",
-    "es": "Controla dispositivos Insteon a través de Insteon Hub 2245/2242",
-    "fr": "Contrôlez les appareils Insteon via Insteon Hub 2245/2242"
+    "en": "Control Your Home, Your Way",
+    "nl": "Beheer je huis op jouw manier",
+    "de": "Gestalten Sie Ihr Zuhause ganz nach Ihren Wünschen",
+    "es": "Controla tu hogar, a tu manera",
+    "fr": "Contrôlez votre maison, à votre façon"
   },
   "category": [
     "lights",
@@ -32,8 +32,8 @@
     "xlarge": "/assets/images/xlarge.png"
   },
   "author": {
-    "name": "Insteon for Homey Development Team",
-    "email": "support@insteon-homey.com"
+    "name": "Douglas Krug",
+    "email": "contact@smarthomeprimer.com"
   },
   "contributors": {
     "developers": [
@@ -48,11 +48,6 @@
     ]
   },
   "contributing": {
-    "donate": {
-      "paypal": {
-        "username": "insteonhomey"
-      }
-    }
   },
   "homeyCommunityTopicId": 0,
   "source": "https://github.com/yourusername/com.insteon",

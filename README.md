@@ -22,7 +22,7 @@ This app is currently in beta testing. Feedback and bug reports are welcome via 
 
 - **Homey Pro** with firmware **12.2.0 or higher**
 - **Insteon Hub** (model 2245 or 2242) on your local network
-- Hub **username** and **password**
+- Hub **username** and **password** (optional for model 2242)
 - Insteon device IDs (6-character hex, e.g., `45ED1C`)
 
 ## Supported Devices
