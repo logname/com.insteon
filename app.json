@@ -1,6 +1,6 @@
 {
   "id": "com.insteon",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "compatibility": ">=12.2.0",
   "sdk": 3,
   "platforms": [
@@ -50,9 +50,9 @@
   "contributing": {
   },
   "homeyCommunityTopicId": 0,
-  "source": "https://github.com/yourusername/com.insteon",
-  "support": "https://github.com/yourusername/com.insteon/issues",
-  "homepage": "https://github.com/yourusername/com.insteon",
+  "source": "https://github.com/logname/com.insteon",
+  "support": "https://github.com/logname/com.insteon/issues",
+  "homepage": "https://github.com/logname/com.insteon",
   "extra": {
     "development": {
       "original_platform": "Hubitat Elevation",

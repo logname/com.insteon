@@ -1,17 +1,17 @@
 {
   "name": "com.insteon",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Control Insteon devices via Insteon Hub on Homey Pro",
   "main": "app.js",
   "author": "Douglas Krug",
   "license": "GPL-3.0",
-  "homepage": "https://github.com/yourusername/com.insteon",
+  "homepage": "https://github.com/logname/com.insteon",
   "bugs": {
-    "url": "https://github.com/yourusername/com.insteon/issues"
+    "url": "https://github.com/logname/com.insteon/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/com.insteon.git"
+    "url": "https://github.com/logname/com.insteon.git"
   },
   "dependencies": {
     "home-controller": "^0.9.2",
