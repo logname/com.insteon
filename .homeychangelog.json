@@ -1,5 +1,8 @@
 {
   "1.6.2": {
     "en": "Updated driver images, app.json and readme.txt"
+  },
+  "1.6.3": {
+    "en": "updated readme.txt and support URL"
   }
 }

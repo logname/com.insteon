@@ -1,5 +1,3 @@
-Control Your Home, Your Way
-
 Features
 
 • Fast Direct Control - Direct HTTP commands to hub (~100ms response)
