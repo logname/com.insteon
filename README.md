@@ -2,13 +2,10 @@
 
 Control your Insteon devices directly through Homey Pro via Insteon Hub (models 2245/2242).
 
-[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](https://github.com/yourusername/com.insteon)
+[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](https://github.com/logname/com.insteon)
 [![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)](LICENSE)
 [![Homey](https://img.shields.io/badge/Homey-12.2.0+-purple.svg)](https://homey.app)
 
-## ⚠️ Beta Testing
-
-This app is currently in beta testing. Feedback and bug reports are welcome via [GitHub Issues](https://github.com/yourusername/com.insteon/issues).
 
 ## Features
 
@@ -309,7 +306,7 @@ GPL-3.0 - See [LICENSE](LICENSE) for details.
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/com.insteon/issues)
+- **Issues**: [GitHub Issues](https://github.com/logname/com.insteon/issues)
 - **Discussions**: [Homey Community Forum](https://community.homey.app)
 - **Documentation**: See docs in this repository
 
@@ -319,4 +316,3 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
-**Made with ❤️ for the Homey Community**

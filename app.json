@@ -1,6 +1,6 @@
 {
   "id": "com.insteon",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "compatibility": ">=12.2.0",
   "sdk": 3,
   "platforms": [
@@ -49,7 +49,7 @@
   },
   "contributing": {
   },
-  "homeyCommunityTopicId": 0,
+  "homeyCommunityTopicId": 151182,
   "source": "https://github.com/logname/com.insteon",
   "support": "https://github.com/logname/com.insteon/issues",
   "homepage": "https://github.com/logname/com.insteon",

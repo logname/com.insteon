@@ -1,6 +1,6 @@
 {
   "name": "com.insteon",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "description": "Control Insteon devices via Insteon Hub on Homey Pro",
   "main": "app.js",
   "author": "Douglas Krug",
