@@ -5,12 +5,12 @@ const Insteon = require('home-controller').Insteon;
 const WebSocket = require('ws');
 
 class InsteonApp extends Homey.App {
-  
+
   /**
    * onInit is called when the app is initialized.
    */
   async onInit() {
-    this.log('Insteon for Homey app is running...');
+    this.log('Insteon app is running...');
 
     // Initialize state
     this.hub = null;
@@ -31,7 +31,7 @@ class InsteonApp extends Homey.App {
 
     // Get app settings
     this.settings = this.homey.settings;
-    
+
     // Initialize hub connection
     await this.initializeHub();
 
@@ -60,22 +60,22 @@ class InsteonApp extends Homey.App {
     if (debugEnabled) {
       // Get existing log
       let logMessages = this.homey.settings.get('debugLog') || [];
-      
+
       // Add timestamp and message
       const timestamp = new Date().toISOString().substr(11, 12);
       const logEntry = `[${timestamp}] ${message}`;
-      
+
       // Add to array
       logMessages.push(logEntry);
-      
+
       // Keep last 1000 messages
       if (logMessages.length > 1000) {
         logMessages = logMessages.slice(-1000);
       }
-      
+
       // Save back to settings
       this.homey.settings.set('debugLog', logMessages);
-      
+
       // Also log to console
       this.log(`[DEBUG] ${message}`);
     }
@@ -141,7 +141,7 @@ class InsteonApp extends Homey.App {
 
       // Start event listener
       this.startEventListener();
-      
+
     } catch (error) {
       this.error('Failed to connect to Insteon Hub:', error);
       this.connectedToHub = false;
@@ -160,9 +160,9 @@ class InsteonApp extends Homey.App {
 
     // Exponential backoff with max delay of 5 minutes
     this.reconnectDelay = Math.min(this.reconnectDelay * 2, 300);
-    
+
     this.log(`Scheduling reconnect in ${this.reconnectDelay} seconds...`);
-    
+
     this.reconnectTimer = setTimeout(() => {
       this.initializeHub();
     }, this.reconnectDelay * 1000);
@@ -209,7 +209,7 @@ class InsteonApp extends Homey.App {
 
       // Find device by Insteon deviceID
       const device = this.devices.get(deviceId);
-      
+
       if (!device) {
         this.debugLog(`❌ No registered device found for Insteon ID ${deviceId}`);
         this.debugLog(`Registered device IDs: [${Array.from(this.devices.keys()).join(', ')}]`);
@@ -218,7 +218,7 @@ class InsteonApp extends Homey.App {
       }
 
       const deviceType = device.driver.id;
-      
+
       this.debugLog(`✅ Found device: ${device.getName()} (${deviceType})`);
 
       switch (deviceType) {
@@ -243,7 +243,7 @@ class InsteonApp extends Homey.App {
 
       // Broadcast to WebSocket clients
       this.broadcastDeviceState(device, deviceId, command2);
-      
+
       this.debugLog('========================================');
     });
   }
@@ -261,15 +261,15 @@ class InsteonApp extends Homey.App {
     this.debugLog(`  messageType: ${messageType}`);
 
     // Status request response or direct messages
-    if (cmd1 === 0x19 || cmd1 === 0x03 || cmd1 === 0x04 || 
-        (cmd1 === 0x00 && cmd2Hex !== '00') || 
+    if (cmd1 === 0x19 || cmd1 === 0x03 || cmd1 === 0x04 ||
+        (cmd1 === 0x00 && cmd2Hex !== '00') ||
         (cmd1 === 0x06 && messageType === '1')) {
-      
+
       const levelInt = parseInt(cmd2Hex, 16) * (100 / 255);
       const level = Math.ceil(levelInt) / 100; // Homey uses 0-1 range
 
       this.debugLog(`  Status update: level=${level.toFixed(2)} (${level > 0 ? 'ON' : 'OFF'})`);
-      
+
       if (device.hasCapability('dim')) {
         this.debugLog(`  Setting dim capability to ${level.toFixed(2)}`);
         device.setCapabilityValue('dim', level).catch(this.error);
@@ -283,7 +283,7 @@ class InsteonApp extends Homey.App {
       const level = Math.ceil(levelInt) / 100;
 
       this.debugLog(`  ON command: level=${level.toFixed(2)}`);
-      
+
       if (device.hasCapability('dim')) {
         this.debugLog(`  Setting dim capability to ${level.toFixed(2)}`);
         device.setCapabilityValue('dim', level).catch(this.error);
@@ -294,7 +294,7 @@ class InsteonApp extends Homey.App {
     // Fast ON
     else if (cmd1 === 0x12) {
       this.debugLog(`  FastON command`);
-      
+
       if (device.hasCapability('dim')) {
         this.debugLog(`  Setting dim capability to 1.00`);
         device.setCapabilityValue('dim', 1).catch(this.error);
@@ -305,7 +305,7 @@ class InsteonApp extends Homey.App {
     // OFF or Fast OFF
     else if (cmd1 === 0x13 || cmd1 === 0x14) {
       this.debugLog(`  ${cmd1 === 0x14 ? 'Fast' : 'Normal'} OFF command`);
-      
+
       if (device.hasCapability('dim')) {
         this.debugLog(`  Setting dim capability to 0.00`);
         device.setCapabilityValue('dim', 0).catch(this.error);
@@ -322,16 +322,16 @@ class InsteonApp extends Homey.App {
     // Manual dim (press and hold to dim)
     else if (cmd1 === 0x16) {
       this.debugLog(`  Start manual dim command (user holding button)`);
-      // No action needed - just informational  
+      // No action needed - just informational
       // When they release, we'll get 0x18 (stop) and query the level
     }
     // Stop dimming - query current level
     else if (cmd1 === 0x18) {
       this.debugLog(`  Stop manual dimming command - querying level`);
-      
+
       const settings = device.getSettings();
       const insteonID = settings.deviceID;
-      
+
       if (insteonID) {
         this.hub.light(insteonID).level().then(level => {
           const normalizedLevel = level / 100;
@@ -353,11 +353,11 @@ class InsteonApp extends Homey.App {
    */
   handleContactEvent(device, command1, command2) {
     const cmd1 = parseInt(command1, 16);
-    
+
     this.debugLog(`handleContactEvent called`);
     this.debugLog(`  cmd1: 0x${command1} (${cmd1})`);
     this.debugLog(`  cmd2: 0x${command2}`);
-    
+
     // Contact sensors use cmd1 for state:
     // 0x11 = OPEN
     // 0x13 = CLOSED
@@ -382,14 +382,14 @@ class InsteonApp extends Homey.App {
   handleLeakEvent(device, command1, command2) {
     const cmd1 = parseInt(command1, 16);
     const cmd2 = parseInt(command2, 16);
-    
+
     this.debugLog(`handleLeakEvent called`);
     this.debugLog(`  cmd1: 0x${command1} (${cmd1})`);
     this.debugLog(`  cmd2: 0x${command2} (${cmd2})`);
-    
+
     // Leak sensors use cmd1=0x11 with cmd2 to indicate state:
     // cmd2=0x02 (2) = WET
-    // cmd2=0x01 (1) = DRY  
+    // cmd2=0x01 (1) = DRY
     // cmd1=0x06 = Heartbeat (ignore)
     if (cmd1 === 0x11 && cmd2 === 0x02) {
       this.debugLog(`  Leak sensor detected WATER (wet) - cmd2=0x02`);
@@ -413,11 +413,11 @@ class InsteonApp extends Homey.App {
    */
   handleMotionEvent(device, command1, command2) {
     const cmd1 = parseInt(command1, 16);
-    
+
     this.debugLog(`handleMotionEvent called`);
     this.debugLog(`  cmd1: 0x${command1} (${cmd1})`);
     this.debugLog(`  cmd2: 0x${command2}`);
-    
+
     // Motion sensors use cmd1 for state (same as contact sensors):
     // 0x11 = ACTIVE (motion detected)
     // 0x13 = INACTIVE (no motion)
@@ -444,7 +444,7 @@ class InsteonApp extends Homey.App {
       name: device.getName(),
       id: deviceId,
       deviceType: device.driver.id,
-      state: device.getCapabilityValue('onoff') ? 
+      state: device.getCapabilityValue('onoff') ?
         (device.hasCapability('dim') ? Math.round(device.getCapabilityValue('dim') * 100) : 100) : 0
     };
 
@@ -460,10 +460,10 @@ class InsteonApp extends Homey.App {
    */
   async initializeWebSocketServer() {
     const wsPort = this.settings.get('wsPort') || 8080;
-    
+
     try {
       this.wss = new WebSocket.Server({ port: wsPort });
-      
+
       this.wss.on('connection', (ws) => {
         this.log('WebSocket client connected');
         this.wsClients.add(ws);
@@ -484,7 +484,7 @@ class InsteonApp extends Homey.App {
               deviceType: device.driver.id,
               dimmable: device.hasCapability('dim')
             }));
-            
+
             if (ws.readyState === WebSocket.OPEN) {
               ws.send(JSON.stringify(deviceList));
             }
@@ -538,39 +538,39 @@ class InsteonApp extends Homey.App {
     this.debugLog(`  Devices Map ID: ${this.devicesMapId || 'UNDEFINED!'}`);
     this.debugLog(`  Device name: ${device.getName()}`);
     this.debugLog(`  Device driver: ${device.driver.id}`);
-    
+
     // Use provided newSettings or get current settings
     const settings = newSettings || device.getSettings();
     this.debugLog(`  Using ${newSettings ? 'NEW' : 'CURRENT'} settings`);
     this.debugLog(`  Settings: ${JSON.stringify(settings)}`);
-    
+
     const insteonID = settings.deviceID;
     this.debugLog(`  Extracted deviceID: "${insteonID}"`);
-    
+
     if (!insteonID || insteonID === '') {
       this.log(`Cannot register device ${device.getName()} - no Insteon ID set`);
       this.debugLog(`  ❌ Registration aborted - no deviceID`);
       this.debugLog(`========================================`);
       return;
     }
-    
+
     // Register by Insteon deviceID (uppercase) for event matching
     const normalizedID = insteonID.toUpperCase();
     this.debugLog(`  Normalized ID: "${normalizedID}"`);
     this.debugLog(`  Current devices Map size: ${this.devices.size}`);
     this.debugLog(`  Current devices Map keys: [${Array.from(this.devices.keys()).join(', ')}]`);
-    
+
     this.devices.set(normalizedID, device);
-    
+
     this.debugLog(`  ✅ Device added to Map`);
     this.debugLog(`  New devices Map size: ${this.devices.size}`);
     this.debugLog(`  New devices Map keys: [${Array.from(this.devices.keys()).join(', ')}]`);
     this.debugLog(`  Verifying: Can we get it back? ${this.devices.has(normalizedID) ? 'YES' : 'NO'}`);
     this.debugLog(`  Retrieved value: ${this.devices.get(normalizedID) ? 'Device object found' : 'NULL/UNDEFINED'}`);
-    
+
     this.log(`Registered device: ${device.getName()} with Insteon ID ${normalizedID}`);
     this.debugLog(`========================================`);
-    
+
     // Set up event listeners for sensor devices
     if (device.driver.id === 'insteon-contact') {
       this.setupContactSensor(device);
@@ -591,7 +591,7 @@ class InsteonApp extends Homey.App {
     door.on('opened', () => {
       this.log(`Contact sensor ${device.getName()} opened`);
       device.setCapabilityValue('alarm_contact', true).catch(this.error);
-      
+
       this.wsClients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify({
@@ -607,7 +607,7 @@ class InsteonApp extends Homey.App {
     door.on('closed', () => {
       this.log(`Contact sensor ${device.getName()} closed`);
       device.setCapabilityValue('alarm_contact', false).catch(this.error);
-      
+
       this.wsClients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify({
@@ -633,7 +633,7 @@ class InsteonApp extends Homey.App {
     leak.on('wet', () => {
       this.log(`Leak sensor ${device.getName()} detected water`);
       device.setCapabilityValue('alarm_water', true).catch(this.error);
-      
+
       this.wsClients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify({
@@ -649,7 +649,7 @@ class InsteonApp extends Homey.App {
     leak.on('dry', () => {
       this.log(`Leak sensor ${device.getName()} is dry`);
       device.setCapabilityValue('alarm_water', false).catch(this.error);
-      
+
       this.wsClients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify({
@@ -669,7 +669,7 @@ class InsteonApp extends Homey.App {
   unregisterDevice(device) {
     const settings = device.getSettings();
     const insteonID = settings.deviceID;
-    
+
     if (insteonID && insteonID !== '') {
       const normalizedID = insteonID.toUpperCase();
       this.devices.delete(normalizedID);
@@ -699,7 +699,7 @@ class InsteonApp extends Homey.App {
     this.debugLog(`========================================`);
     this.debugLog(`sendSceneCommand() called`);
     this.debugLog(`  Command: ${command}`);
-    
+
     // Get hub settings
     const hubHost = this.homey.settings.get('hubHost');
     const hubPort = this.homey.settings.get('hubPort') || 25105;
@@ -710,7 +710,7 @@ class InsteonApp extends Homey.App {
     if (!hubHost) {
       throw new Error('Hub not configured');
     }
-    
+
     // Check credentials requirement based on hub model
     if (hubModel === '2245' && (!hubUser || !hubPass)) {
       throw new Error('Hub 2245 requires username and password');
@@ -730,7 +730,7 @@ class InsteonApp extends Homey.App {
 
     try {
       const http = require('http');
-      
+
       return await new Promise((resolve, reject) => {
         const urlObj = new URL(url);
         const options = {
@@ -741,7 +741,7 @@ class InsteonApp extends Homey.App {
           headers: {},
           timeout: 5000
         };
-        
+
         // Only add auth header if credentials provided
         if (hubUser && hubPass) {
           options.headers['Authorization'] = 'Basic ' + Buffer.from(`${hubUser}:${hubPass}`).toString('base64');
@@ -784,7 +784,7 @@ class InsteonApp extends Homey.App {
    */
   async testConnection() {
     this.log('Testing hub connection from settings page...');
-    
+
     try {
       // Get hub settings
       const hubHost = this.homey.settings.get('hubHost');
@@ -792,24 +792,24 @@ class InsteonApp extends Homey.App {
       const hubUser = this.homey.settings.get('hubUser') || '';
       const hubPass = this.homey.settings.get('hubPass') || '';
       const hubModel = this.homey.settings.get('hubModel') || '2245';
-      
+
       // Validate settings
       if (!hubHost) {
         return { success: false, error: 'Hub IP address is required' };
       }
-      
+
       if (hubModel === '2245' && (!hubUser || !hubPass)) {
         return { success: false, error: 'Hub 2245 requires username and password' };
       }
-      
+
       // Try a simple HTTP request to the hub
       const http = require('http');
       const testUrl = hubUser && hubPass
         ? `http://${hubUser}:${hubPass}@${hubHost}:${hubPort}/`
         : `http://${hubHost}:${hubPort}/`;
-      
+
       this.log(`Testing connection to: ${hubHost}:${hubPort}`);
-      
+
       const result = await new Promise((resolve) => {
         const urlObj = new URL(testUrl);
         const options = {
@@ -820,22 +820,22 @@ class InsteonApp extends Homey.App {
           headers: {},
           timeout: 5000
         };
-        
+
         // Add auth header if credentials provided
         if (hubUser && hubPass) {
           options.headers['Authorization'] = 'Basic ' + Buffer.from(`${hubUser}:${hubPass}`).toString('base64');
         }
-        
+
         const req = http.request(options, (res) => {
           this.log(`Hub responded with status: ${res.statusCode}`);
           // Any response (even errors) means the hub is reachable
           resolve({ success: true });
         });
-        
+
         req.on('error', (error) => {
           this.error('Hub connection test failed:', error.message);
           let errorMessage = error.message;
-          
+
           // Provide user-friendly error messages
           if (error.code === 'EHOSTUNREACH') {
             errorMessage = 'Hub unreachable. Check IP address and network connection.';
@@ -846,21 +846,21 @@ class InsteonApp extends Homey.App {
           } else if (error.code === 'ENOTFOUND') {
             errorMessage = 'Hub not found. Check IP address.';
           }
-          
+
           resolve({ success: false, error: errorMessage });
         });
-        
+
         req.on('timeout', () => {
           req.destroy();
           resolve({ success: false, error: 'Connection timeout. Hub may be offline or unreachable.' });
         });
-        
+
         req.end();
       });
-      
+
       this.log('Test connection result:', result);
       return result;
-      
+
     } catch (error) {
       this.error('Test connection error:', error);
       return { success: false, error: error.message || 'Unknown error' };
@@ -872,7 +872,7 @@ class InsteonApp extends Homey.App {
    */
   async onUninit() {
     this.log('Insteon app is shutting down...');
-    
+
     // Close WebSocket server
     if (this.wss) {
       this.wss.close();

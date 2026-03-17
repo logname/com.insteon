@@ -1,7 +1,7 @@
 #!/bin/bash
-# Verification script for Insteon for Homey app
+# Verification script for Insteon app
 
-echo "🔍 Verifying Insteon for Homey app structure..."
+echo "🔍 Verifying Insteon app structure..."
 echo ""
 
 # Change to app directory
@@ -65,7 +65,7 @@ if command -v node &> /dev/null; then
         echo "  ✗ app.json invalid JSON"
         ((errors++))
     fi
-    
+
     if node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))" 2>/dev/null; then
         echo "  ✓ package.json valid"
     else
