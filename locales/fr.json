@@ -1,0 +1,33 @@
+{
+  "settings": {
+    "title": "Paramètres Insteon Hub",
+    "hubHost": "Adresse IP du Hub",
+    "hubPort": "Port du Hub",
+    "hubUser": "Nom d'utilisateur du Hub",
+    "hubPass": "Mot de passe du Hub",
+    "hubModel": "Modèle de Hub",
+    "wsPort": "Port WebSocket",
+    "description": {
+      "hubHost": "Adresse IP de votre hub Insteon",
+      "hubPort": "Port TCP pour la communication avec le hub (par défaut : 25105)",
+      "hubUser": "Nom d'utilisateur des paramètres du hub",
+      "hubPass": "Mot de passe des paramètres du hub",
+      "hubModel": "Modèle de hub (2245 ou 2242)",
+      "wsPort": "Port du serveur WebSocket pour les connexions externes (par défaut : 8080)"
+    }
+  },
+  "errors": {
+    "hub_not_connected": "Non connecté au hub Insteon",
+    "command_failed": "Échec de l'exécution de la commande",
+    "invalid_device_id": "ID d'appareil Insteon non valide",
+    "device_not_found": "Appareil introuvable sur le hub"
+  },
+  "pair": {
+    "title": "Ajouter un Appareil Insteon",
+    "description": "Entrez l'ID de l'appareil Insteon et la configuration"
+  },
+  "repair": {
+    "title": "Configurer l'Appareil Insteon",
+    "description": "Mettre à jour les paramètres de l'appareil"
+  }
+}
