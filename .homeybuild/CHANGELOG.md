@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2025-03-17
+
+### Fixed
+- **Test Connection NOW WORKS!** - Added missing API section to app.json
+  - The `api` section in app.json was missing, causing 404 errors
+  - Now properly registers `/test-connection` endpoint
+  - Debug log auto-shows during test for troubleshooting
+  - Displays success/error messages correctly
+
+### Added
+- Comprehensive debug logging for test connection in settings UI
+- Auto-show debug log when testing connection
+- Version number now displays correctly (1.7.0)
+
+### Technical Details
+- Added `api` section to app.json mapping `getTestConnection` to `/test-connection`
+- Requires BOTH api.js file AND app.json api definition for endpoints to work
+- Pattern now matches working Hubitat-Homey integration
+
+### Root Cause
+- api.js file existed but wasn't registered in app.json
+- Homey returned "Cannot GET /api/app/com.insteon/test-connection" (404)
+- Debug logging revealed the missing registration
+
+## [1.6.9] - 2025-03-17
+
+### Added
+- Debug logging to settings page UI (no CLI needed)
+
+## [1.6.8] - 2025-03-17
+
+### Added
+- Console logging and timeout detection
+
 ## [1.6.7] - 2025-03-17
 
 ### Fixed

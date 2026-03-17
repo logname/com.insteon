@@ -2,7 +2,7 @@
 
 Control your Insteon devices directly through Homey Pro via Insteon Hub (models 2245/2242).
 
-[![Version](https://img.shields.io/badge/version-1.6.7-blue.svg)](https://github.com/logname/com.insteon)
+[![Version](https://img.shields.io/badge/version-1.7.0-blue.svg)](https://github.com/logname/com.insteon)
 [![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)](LICENSE)
 [![Homey](https://img.shields.io/badge/Homey-12.2.0+-purple.svg)](https://homey.app)
 
@@ -213,7 +213,18 @@ See [TECHNICAL.md](TECHNICAL.md) for implementation details.
 
 ## Complete Changelog
 
-### v1.6.7 (2025-03-17) - Test Connection Fixed
+### v1.7.0 (2025-03-17) - Test Connection WORKING! ✅
+- **THE FIX**: Added missing `api` section to app.json
+- Test Connection now fully functional
+- Debug log auto-shows during test for troubleshooting
+- Proper success/error messages display
+- Fixed version display (now shows 1.7.0)
+
+### v1.6.9 (2025-03-17) - Debug logging in UI
+
+### v1.6.8 (2025-03-17) - Console logging added
+
+### v1.6.7 (2025-03-17) - Test Connection Fixed (api.js created)
 - Test Connection now works using proper Homey API pattern
 - Created api.js file for API endpoints
 - Instant feedback with proper error messages
