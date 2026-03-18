@@ -1,17 +1,17 @@
 {
   "id": "com.insteon",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "compatibility": ">=12.2.0",
   "sdk": 3,
   "platforms": [
     "local"
   ],
   "name": {
-    "en": "Insteon for Homey",
-    "nl": "Insteon voor Homey",
-    "de": "Insteon für Homey",
-    "es": "Insteon para Homey",
-    "fr": "Insteon pour Homey"
+    "en": "Insteon",
+    "nl": "Insteon",
+    "de": "Insteon",
+    "es": "Insteon",
+    "fr": "Insteon"
   },
   "description": {
     "en": "Control Your Home, Your Way",
