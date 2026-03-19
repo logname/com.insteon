@@ -1,6 +1,6 @@
 {
   "id": "com.insteon",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "compatibility": ">=12.2.0",
   "sdk": 3,
   "platforms": [
@@ -43,7 +43,7 @@
       },
       {
         "name": "Claude (Anthropic AI Assistant)",
-        "role": "Complete app development v1.0.0-v1.5.2: Groovy to Homey SDK 3 conversion, architecture design, all features and drivers"
+        "role": "Complete app development v1.0.0-v1.7.0: Groovy to Homey SDK 3 conversion, architecture design, all features and drivers"
       }
     ]
   },
