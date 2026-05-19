@@ -481,6 +481,7 @@ class InsteonApp extends Homey.App {
 
     this.log(`Attempting to start WebSocket server on port ${wsPort}...`);
 <<<<<<< HEAD
+<<<<<<< HEAD
     
     try {
       // ✅ CRITICAL: Create WebSocket server INSIDE try-catch to catch EADDRINUSE
@@ -495,11 +496,20 @@ class InsteonApp extends Homey.App {
     try {
       // ✅ CRITICAL: Create WebSocket server INSIDE try-catch to catch EADDRINUSE
       // Some versions of 'ws' throw synchronously, others emit 'error' event
+=======
+
+    try {
+      // ✅ CRITICAL: Create WebSocket server INSIDE try-catch to catch EADDRINUSE
+      // Some versions of 'ws' throw synchronously, others emit 'error' event
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
       const wss = new WebSocket.Server({
         port: wsPort,
         clientTracking: true
       });
 
+<<<<<<< HEAD
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
       // Handle server errors that might occur during or after creation
       wss.on('error', (error) => {
@@ -513,7 +523,11 @@ class InsteonApp extends Homey.App {
         }
       });
 <<<<<<< HEAD
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -556,7 +570,11 @@ class InsteonApp extends Homey.App {
     } catch (error) {
       this.error('❌ Failed to start WebSocket server:', error.message);
 <<<<<<< HEAD
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -569,15 +587,21 @@ class InsteonApp extends Homey.App {
         this.error(`App will continue without WebSocket server - devices will still work.`);
       }
 <<<<<<< HEAD
+<<<<<<< HEAD
       
       // Set wss to null so app knows WebSocket is not available
       this.wss = null;
       
 =======
+=======
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 
       // Set wss to null so app knows WebSocket is not available
       this.wss = null;
 
+<<<<<<< HEAD
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
       // ✅ DON'T THROW - let app continue without WebSocket
       // WebSocket is optional, app can still control devices without it
@@ -877,7 +901,11 @@ class InsteonApp extends Homey.App {
   async testConnection() {
     this.log('Testing hub connection and WebSocket port from settings page...');
 <<<<<<< HEAD
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -961,6 +989,7 @@ class InsteonApp extends Homey.App {
       this.log(`Testing WebSocket port: ${wsPort}`);
       const net = require('net');
 <<<<<<< HEAD
+<<<<<<< HEAD
       
       results.websocket = await new Promise((resolve) => {
         const testServer = net.createServer();
@@ -972,6 +1001,8 @@ class InsteonApp extends Homey.App {
               success: false, 
               error: `Port ${wsPort} is in use. Try port ${wsPort + 1} or restart Homey.` 
 =======
+=======
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 
       results.websocket = await new Promise((resolve) => {
         const testServer = net.createServer();
@@ -982,6 +1013,9 @@ class InsteonApp extends Homey.App {
             resolve({
               success: false,
               error: `Port ${wsPort} is in use. Try port ${wsPort + 1} or restart Homey.`
+<<<<<<< HEAD
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
             });
           } else {
@@ -989,7 +1023,11 @@ class InsteonApp extends Homey.App {
           }
         });
 <<<<<<< HEAD
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -1000,7 +1038,11 @@ class InsteonApp extends Homey.App {
           });
         });
 <<<<<<< HEAD
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -1010,6 +1052,7 @@ class InsteonApp extends Homey.App {
       // Combine results
       const hubSuccess = results.hub.success;
       const wsSuccess = results.websocket.success;
+<<<<<<< HEAD
 <<<<<<< HEAD
       
       if (hubSuccess && wsSuccess) {
@@ -1032,6 +1075,8 @@ class InsteonApp extends Homey.App {
           success: false, 
           error: `Hub: ${results.hub.error}. WebSocket: ${results.websocket.error}` 
 =======
+=======
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 
       if (hubSuccess && wsSuccess) {
         return {
@@ -1052,6 +1097,9 @@ class InsteonApp extends Homey.App {
         return {
           success: false,
           error: `Hub: ${results.hub.error}. WebSocket: ${results.websocket.error}`
+<<<<<<< HEAD
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
         };
       }
