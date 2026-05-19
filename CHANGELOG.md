@@ -5,7 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.7.0] - 2025-03-17
+## [1.7.8] - 2026-05-18
+
+### Fixed
+
+- Hub Unreachable Crash (EHOSTUNREACH)
+
+**Added try-catch**
+
+- dimmer/device.js: All capability handlers return false instead of throwing
+- switch/device.js: Same fixes as dimmer
+- scene/device.js: Added try-catch to onCapabilityOnOff
+- app.js: Flow cards now have try-catch
+
+## [1.7.7] - 2026-04-22
+
+### Fixed - CRITICAL
+- **WebSocket Port Crash Loop ELIMINATED** (1248+ crashes prevented)
+  - Enhanced error handling for EADDRINUSE
+  - WebSocket creation now fully protected with error event listener
+  - App continues without WebSocket if port unavailable
+  - Devices still work via direct HTTP even without WebSocket
+
+### Changed
+- **Test Connection Auto-Saves Settings**
+  - Now saves ALL settings including wsPort before testing
+  - Users can change port and test immediately
+  - No need to manually save before testing
+  - Prevents settings mismatch
+
+### Added
+- wsPort to debug log output in Test Connection
+- More detailed EADDRINUSE error messages with solutions
+
+## [1.7.6] - 2026-03-19
+
+### Fixed
+- **401 Unauthorized Crash Prevention**
+  - App no longer crashes when hub credentials are incorrect
+  - Added try-catch around synchronous errors from home-controller library
+  - httpClient() and connect() calls now wrapped to catch immediate throws
+  - Wrong username/password now logs error and schedules reconnect instead of crashing
+
+### Technical Details
+- home-controller library throws HTTP 401 errors synchronously before callback
+- Added try-catch inside Promise wrappers in initializeHub()
+- Both Hub 2245 (httpClient) and Hub 2242 (connect) protected
+- Synchronous errors caught and passed to existing error handler
+
+## [1.7.5] - 2026-03-19
+
+### Fixed
+- **Crash Prevention**: Comprehensive error handling to prevent crashes
+  - (See CHANGELOG-v1.7.5.md for details)
+
+## [1.7.0] - 2026-03-17
 
 ### Fixed
 - **Test Connection NOW WORKS!** - Added missing API section to app.json
@@ -29,17 +83,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Homey returned "Cannot GET /api/app/com.insteon/test-connection" (404)
 - Debug logging revealed the missing registration
 
-## [1.6.9] - 2025-03-17
+## [1.6.9] - 2026-03-17
 
 ### Added
 - Debug logging to settings page UI (no CLI needed)
 
-## [1.6.8] - 2025-03-17
+## [1.6.8] - 2026-03-17
 
 ### Added
 - Console logging and timeout detection
 
-## [1.6.7] - 2025-03-17
+## [1.6.7] - 2026-03-17
 
 ### Fixed
 - **Test Connection Now Works!** Using proper Homey API pattern
@@ -59,7 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hubitat-Homey v1.6.0 API pattern (working reference)
 - User-provided Insteon v1.6.5 base
 
-## [1.6.6] - 2025-03-17
+## [1.6.6] - 2026-03-17
 
 ### Fixed
 - **Test Connection Button**: Now works correctly
@@ -75,7 +129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Settings page polls for result with 500ms interval
 - Compatible with Homey SDK 3 settings mechanism
 
-## [1.6.5] - 2025-03-16
+## [1.6.5] - 2026-03-16
 
 ### Added
 - **Test Connection Button**: Verify hub connectivity before saving settings
@@ -95,7 +149,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ECONNREFUSED` → "Connection refused. Check port number (default: 25105)."
 - `ENOTFOUND` → "Hub not found. Check IP address."
 
-## [1.6.0] - 2025-02-16
+## [1.6.0] - 2026-02-16
 
 ### Added
 - **Hub 2242 Support Without Credentials**: Username/password now optional for older 2242 hubs
@@ -115,7 +169,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Authorization header only added when credentials provided
 - All device drivers (dimmer, switch, scene) updated to support optional auth
 
-## [1.5.3] - 2025-02-16
+## [1.5.3] - 2026-02-16
 
 ### Fixed
 - **App Store Images**: Resized large.png to required 500x350 dimensions
@@ -123,7 +177,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - large.png: 500x350 ✅ (was 250x175)
   - xlarge.png: 1000x700 ✅
 
-## [1.5.2] - 2025-02-16
+## [1.5.2] - 2026-02-16
 
 ### Changed
 - **Beta Testing Preparation**: Documentation and attribution updates
@@ -139,7 +193,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Chris Wilson (@cwwilson08) attribution for original Hubitat Groovy drivers
 - Full disclosure of Claude's role in complete app development (v1.0.0-v1.5.2)
 
-## [1.5.1] - 2025-02-15
+## [1.5.1] - 2026-02-15
 
 ### Removed
 - **Scene Triggers**: Removed (hub doesn't report scene events)
@@ -159,7 +213,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Technical Note
 The Insteon hub/home-controller library does not report scene events, so we cannot trigger flows based on scene activation or check scene state. Scene actions work because we send commands directly to the hub.
 
-## [1.5.0] - 2025-02-15
+## [1.5.0] - 2026-02-15
 
 ### Added
 - **Scene Flow Cards**: Control scenes directly from Flows without creating devices
@@ -188,7 +242,7 @@ The Insteon hub/home-controller library does not report scene events, so we cann
 - And: Scene 20 is on
 - Then: Send notification "Away mode activated"
 
-## [1.4.0] - 2025-02-14
+## [1.4.0] - 2026-02-14
 
 ### Added
 - **Insteon Scene support**: New device type for triggering hub-stored scenes
@@ -212,7 +266,7 @@ The Insteon hub/home-controller library does not report scene events, so we cann
 3. Optionally enable "Use Fast ON/OFF"
 4. Toggle scene ON/OFF from Homey
 
-## [1.3.1] - 2025-02-14
+## [1.3.1] - 2026-02-14
 
 ### Fixed
 - **Switch fastCommands**: Removed from switches (they don't support it)
@@ -225,7 +279,7 @@ The Insteon hub/home-controller library does not report scene events, so we cann
 - **Leak Sensor**: deviceID only  
 - **Motion Sensor**: deviceID only
 
-## [1.3.0] - 2025-02-14
+## [1.3.0] - 2026-02-14
 
 ### Changed
 - **Motion sensor**: Simplified to match contact sensor behavior
@@ -242,7 +296,7 @@ The Insteon hub/home-controller library does not report scene events, so we cann
 - No more artificial timeouts - sensors report actual state
 - Cleaner settings interface - removed unnecessary options
 
-## [1.2.6] - 2025-02-14
+## [1.2.6] - 2026-02-14
 
 ### Added
 - Contact sensor heartbeat (0x06) handling - now ignored properly
@@ -253,7 +307,7 @@ Contact sensors were already correct:
 - **cmd1: 0x13** = CLOSED → `alarm_contact = false`
 - **cmd1: 0x06** = Heartbeat → Ignored
 
-## [1.2.5] - 2025-02-14
+## [1.2.5] - 2026-02-14
 
 ### Fixed
 - **Leak sensor CORRECTED**: It's cmd2 that determines wet vs dry, not cmd1!
@@ -265,7 +319,7 @@ Contact sensors were already correct:
 Previous versions incorrectly triggered WET on any 0x11 command.
 Now properly checks cmd2: 0x02=wet, 0x01=dry.
 
-## [1.2.4] - 2025-02-14
+## [1.2.4] - 2026-02-14
 
 ### Fixed
 - **Leak sensor alarm persistence**: 0x06 is a heartbeat, NOT a dry signal
@@ -277,7 +331,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - **0x06** = Heartbeat (ignored) → Alarm stays in current state
 - **0x13** = Manual reset button → Clears alarm
 
-## [1.2.3] - 2025-02-14
+## [1.2.3] - 2026-02-14
 
 ### Fixed
 - **Leak sensor DRY detection**: Now handles command 0x06 (heartbeat/dry signal)
@@ -287,7 +341,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Leak sensors send 0x11 for WET and 0x06 for DRY (heartbeat)
 - Handler now accepts both 0x06 and 0x13 as DRY signals
 
-## [1.2.2] - 2025-02-14
+## [1.2.2] - 2026-02-14
 
 ### Fixed
 - Debug log container now shows when reopening settings if debug logging is enabled
@@ -297,7 +351,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 ### Changed
 - Improved debug logging to identify which sensor handler is being called
 
-## [1.2.1] - 2025-02-14
+## [1.2.1] - 2026-02-14
 
 ### Fixed
 - **CRITICAL**: Sensors now register properly when Device ID is configured
@@ -309,7 +363,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Debug log container shows/hides based on checkbox state
 - Version updated to 1.2.1 in debug banner
 
-## [1.2.0] - 2025-02-14
+## [1.2.0] - 2026-02-14
 
 ### Added
 - **Full sensor support** for contact, leak, and motion sensors
@@ -324,7 +378,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Motion sensor properly clears timeout when new motion detected
 - All sensor states now sync properly with Homey
 
-## [1.1.7] - 2025-02-14
+## [1.1.7] - 2026-02-14
 
 ### Added
 - Support for manual dimming commands (0x16, 0x17, 0x18)
@@ -336,7 +390,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - No more "Unhandled command: 0x17" warnings
 - Manual dimming now properly updates Homey when button released
 
-## [1.1.6] - 2025-02-14
+## [1.1.6] - 2026-02-14
 
 ### Fixed
 - **CRITICAL BUG FOUND AND FIXED**: registerDevice was reading OLD settings instead of NEW settings
@@ -348,7 +402,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Solution: Pass `newSettings` parameter directly to `registerDevice(device, newSettings)`
 - registerDevice now accepts optional newSettings parameter
 
-## [1.1.5] - 2025-02-13
+## [1.1.5] - 2026-02-13
 
 ### Added
 - Map lifecycle tracking with unique ID
@@ -360,7 +414,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Version updated to 1.1.5
 - More detailed Map state logging at every step
 
-## [1.1.4] - 2025-02-13
+## [1.1.4] - 2026-02-13
 
 ### Fixed
 - Added extensive debugging to registerDevice() function
@@ -372,7 +426,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Shows Map size before and after registration
 - Shows all registered device IDs for comparison
 
-## [1.1.3] - 2025-02-13
+## [1.1.3] - 2026-02-13
 
 ### Fixed
 - **CRITICAL**: Device registration now actually happens when Device ID is configured
@@ -384,7 +438,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Version banner updated to 1.1.3
 - More verbose debug logging in device settings changes
 
-## [1.1.2] - 2025-02-13
+## [1.1.2] - 2026-02-13
 
 ### Fixed
 - **CRITICAL**: Fixed debug logging to actually work in real-time
@@ -397,7 +451,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Debug logging uses settings storage and polling instead of events
 - Logs are preserved when closing and reopening settings
 
-## [1.1.1] - 2025-02-13
+## [1.1.1] - 2026-02-13
 
 ### Added
 - **Debug Logging UI** in app settings page
@@ -412,7 +466,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Debug logs include timestamps
 - All event processing logged when debug mode enabled
 
-## [1.1.0] - 2025-02-13
+## [1.1.0] - 2026-02-13
 
 ### Fixed
 - **CRITICAL**: Added missing trailing `-` to HTTP command URL format
@@ -425,7 +479,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Event listener logs every received event with full details
 - handleLightEvent logs which command path it takes and capability updates
 
-## [1.0.9] - 2025-02-13
+## [1.0.9] - 2026-02-13
 
 ### Fixed
 - **CRITICAL**: Rewrote HTTP request handling using native Node.js http module
@@ -438,7 +492,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Added detailed logging at every step for troubleshooting
 - Better error messages with full stack traces
 
-## [1.0.8] - 2025-02-13
+## [1.0.8] - 2026-02-13
 
 ### Fixed
 - **CRITICAL**: Fixed "Failed to execute command" error
@@ -446,7 +500,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Changed HTTP library from `fetch` to `http.min` (Homey standard)
 - Added better error logging to help diagnose connection issues
 
-## [1.0.7] - 2025-02-13
+## [1.0.7] - 2026-02-13
 
 ### Fixed
 - **CRITICAL**: Replaced home-controller device control with direct HTTP commands
@@ -468,7 +522,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Event listener matches devices by uppercase Insteon deviceID
 - Commands: 11=ON, 12=FastON, 13=OFF, 14=FastOFF + level in hex
 
-## [1.0.6] - 2025-02-13
+## [1.0.6] - 2026-02-13
 
 ### Fixed
 - **CRITICAL**: Capability listeners now register even when device not configured
@@ -481,7 +535,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Moved capability listener registration before configuration check in onInit
 - Added deviceID check in onCapabilityOnoff and onCapabilityDim handlers
 
-## [1.0.5] - 2025-02-13
+## [1.0.5] - 2026-02-13
 
 ### Added
 - **Placeholder device workflow** - Devices can now be added without pre-configuration
@@ -498,7 +552,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Users can now actually add devices (was showing empty list before)
 - Clear indication when device needs configuration
 
-## [1.0.4] - 2025-02-13
+## [1.0.4] - 2026-02-13
 
 ### Fixed
 - **CRITICAL**: Removed deprecated settings from app.json (SDK 3 doesn't support this)
@@ -510,14 +564,14 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Settings now use custom HTML page instead of app.json schema
 - Cleaner, more user-friendly settings interface
 
-## [1.0.3] - 2025-02-12
+## [1.0.3] - 2026-02-12
 
 ### Fixed
 - **CRITICAL**: Fixed settings validation error - changed all `label` to `title` in settings
 - Cleaned up .DS_Store files
 - Directory renamed to Insteon-Homey-v1.0.3 for easier version tracking
 
-## [1.0.2] - 2025-02-12
+## [1.0.2] - 2026-02-12
 
 ### Fixed
 - **CRITICAL**: Removed .homeycompose directory that was causing "driver.compose.json" errors
@@ -526,7 +580,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Cleaned up .DS_Store and __MACOSX metadata files
 - Fixed directory name to com.insteon (was "insteon")
 
-## [1.0.1] - 2025-02-12
+## [1.0.1] - 2026-02-12
 
 ### Fixed
 - Corrected home-controller dependency version from 2.0.6 to 0.9.2 (actual npm version)
@@ -534,7 +588,7 @@ Now properly checks cmd2: 0x02=wet, 0x01=dry.
 - Updated compatibility requirement to >=12.2.0
 - Fixed Insteon import statement for home-controller v0.9.2
 
-## [1.0.0] - 2025-02-12
+## [1.0.0] - 2026-02-12
 
 ### Added
 - Initial release of Insteon for Homey

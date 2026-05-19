@@ -49,13 +49,15 @@ class InsteonDimmerDevice extends Homey.Device {
     
     // Check if device is configured
     if (!this.deviceID || this.deviceID === '') {
-      throw new Error(this.homey.__('device.not_configured'));
+      this.error('Device not configured with Insteon ID');
+      return false; // ✅ Don't throw - return false to prevent crash
     }
     
     const app = this.homey.app;
     
     if (!app.isConnectedToHub()) {
-      throw new Error(this.homey.__('errors.hub_not_connected'));
+      this.error('Hub not connected, cannot toggle device');
+      return false; // ✅ Don't throw - return false to prevent crash
     }
 
     try {
@@ -74,8 +76,8 @@ class InsteonDimmerDevice extends Homey.Device {
 
       return true;
     } catch (error) {
-      this.error('Failed to set onoff:', error);
-      throw new Error(this.homey.__('errors.command_failed'));
+      this.error('Failed to set onoff:', error.message);
+      return false; // ✅ Don't throw - return false to prevent crash
     }
   }
 
@@ -88,13 +90,15 @@ class InsteonDimmerDevice extends Homey.Device {
 
     // Check if device is configured
     if (!this.deviceID || this.deviceID === '') {
-      throw new Error(this.homey.__('device.not_configured'));
+      this.error('Device not configured with Insteon ID');
+      return false; // ✅ Don't throw
     }
 
     const app = this.homey.app;
 
     if (!app.isConnectedToHub()) {
-      throw new Error(this.homey.__('errors.hub_not_connected'));
+      this.error('Hub not connected, cannot set dim level');
+      return false; // ✅ Don't throw
     }
 
     try {
@@ -113,8 +117,8 @@ class InsteonDimmerDevice extends Homey.Device {
 
       return true;
     } catch (error) {
-      this.error('Failed to set dim level:', error);
-      throw new Error(this.homey.__('errors.command_failed'));
+      this.error('Failed to set dim level:', error.message);
+      return false; // ✅ Don't throw
     }
   }
 
@@ -128,7 +132,8 @@ class InsteonDimmerDevice extends Homey.Device {
     const hub = app.getHub();
 
     if (!hub || !app.isConnectedToHub()) {
-      throw new Error(this.homey.__('errors.hub_not_connected'));
+      this.error('Hub not connected, cannot turn on fast');
+      return false; // ✅ Don't throw
     }
 
     try {
@@ -138,9 +143,10 @@ class InsteonDimmerDevice extends Homey.Device {
       if (this.hasCapability('dim')) {
         this.setCapabilityValue('dim', 1).catch(this.error);
       }
+      return true;
     } catch (error) {
-      this.error('Failed to turn on fast:', error);
-      throw new Error(this.homey.__('errors.command_failed'));
+      this.error('Failed to turn on fast:', error.message);
+      return false; // ✅ Don't throw
     }
   }
 
@@ -154,7 +160,8 @@ class InsteonDimmerDevice extends Homey.Device {
     const hub = app.getHub();
 
     if (!hub || !app.isConnectedToHub()) {
-      throw new Error(this.homey.__('errors.hub_not_connected'));
+      this.error('Hub not connected, cannot turn off fast');
+      return false; // ✅ Don't throw
     }
 
     try {
@@ -164,9 +171,10 @@ class InsteonDimmerDevice extends Homey.Device {
       if (this.hasCapability('dim')) {
         this.setCapabilityValue('dim', 0).catch(this.error);
       }
+      return true;
     } catch (error) {
-      this.error('Failed to turn off fast:', error);
-      throw new Error(this.homey.__('errors.command_failed'));
+      this.error('Failed to turn off fast:', error.message);
+      return false; // ✅ Don't throw
     }
   }
 
@@ -286,13 +294,13 @@ class InsteonDimmerDevice extends Homey.Device {
 
       if (!hubHost) {
         this.error('Hub IP not configured!');
-        throw new Error('Hub not configured in app settings. Please configure hub IP address.');
+        return Promise.reject(new Error('Hub not configured in app settings. Please configure hub IP address.'));
       }
       
       // Check credentials requirement based on hub model
       if (hubModel === '2245' && (!hubUser || !hubPass)) {
         this.error('Hub 2245 requires credentials!');
-        throw new Error('Hub 2245 requires username and password in app settings.');
+        return Promise.reject(new Error('Hub 2245 requires username and password in app settings.'));
       }
 
       // Build URL - NOTE: Must end with dash!
@@ -377,7 +385,7 @@ class InsteonDimmerDevice extends Homey.Device {
       this.error('Error type:', error.constructor.name);
       this.error('Error message:', error.message);
       this.error('Error stack:', error.stack);
-      throw new Error(`Command failed: ${error.message}`);
+      return Promise.reject(new Error(`Command failed: ${error.message}`));
     }
   }
 

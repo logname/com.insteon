@@ -4,5 +4,8 @@
   },
   "1.7.4": {
     "en": "Updated driver and app images"
+  },
+  "1.7.8": {
+    "en": "Bug Fix - Missing error handling from previous build"
   }
 }

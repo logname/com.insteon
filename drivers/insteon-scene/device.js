@@ -29,33 +29,39 @@ class InsteonSceneDevice extends Device {
   async onCapabilityOnOff(value) {
     this.log(`Scene ${value ? 'ON' : 'OFF'} triggered`);
 
-    const settings = this.getSettings();
-    const sceneNumber = settings.sceneNumber;
-    const fastCommands = settings.fastCommands || false;
+    try {
+      const settings = this.getSettings();
+      const sceneNumber = settings.sceneNumber;
+      const fastCommands = settings.fastCommands || false;
 
-    if (!sceneNumber) {
-      throw new Error('Scene number not configured');
+      if (!sceneNumber) {
+        this.error('Scene number not configured');
+        return false; // ✅ Don't throw
+      }
+
+      // Pad scene number to 2 digits
+      const scenePadded = sceneNumber.toString().padStart(2, '0');
+
+      // Determine command based on state and fast setting
+      let command;
+      if (value) {
+        // Turn ON
+        command = fastCommands ? `12${scenePadded}` : `11${scenePadded}`;
+      } else {
+        // Turn OFF
+        command = fastCommands ? `14${scenePadded}` : `13${scenePadded}`;
+      }
+
+      this.log(`Sending scene command: ${command} (${value ? 'ON' : 'OFF'}${fastCommands ? ' FAST' : ''})`);
+
+      // Send command via app
+      await this.insteonApp.sendSceneCommand(command);
+
+      return true;
+    } catch (error) {
+      this.error(`Failed to control scene: ${error.message}`);
+      return false; // ✅ Don't throw - prevents crash
     }
-
-    // Pad scene number to 2 digits
-    const scenePadded = sceneNumber.toString().padStart(2, '0');
-
-    // Determine command based on state and fast setting
-    let command;
-    if (value) {
-      // Turn ON
-      command = fastCommands ? `12${scenePadded}` : `11${scenePadded}`;
-    } else {
-      // Turn OFF
-      command = fastCommands ? `14${scenePadded}` : `13${scenePadded}`;
-    }
-
-    this.log(`Sending scene command: ${command} (${value ? 'ON' : 'OFF'}${fastCommands ? ' FAST' : ''})`);
-
-    // Send command via app
-    await this.insteonApp.sendSceneCommand(command);
-
-    return true;
   }
 
   async onSettings({ oldSettings, newSettings, changedKeys }) {

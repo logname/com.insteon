@@ -390,7 +390,8 @@
                 hubPort: parseInt(document.getElementById('hubPort').value) || 25105,
                 hubUser: document.getElementById('hubUser').value || '',
                 hubPass: document.getElementById('hubPass').value || '',
-                hubModel: document.getElementById('hubModel').value || '2245'
+                hubModel: document.getElementById('hubModel').value || '2245',
+                wsPort: parseInt(document.getElementById('wsPort').value) || 8080
             };
             
             appendLog('Settings from form:');
@@ -399,7 +400,7 @@
             appendLog(`  Model: ${settings.hubModel}`);
             appendLog(`  User: ${settings.hubUser ? '***' : '(blank)'}`);
             appendLog(`  Pass: ${settings.hubPass ? '***' : '(blank)'}`);
-            
+            appendLog(`  WebSocket Port: ${settings.wsPort}`);            
             // Validate required fields
             if (!settings.hubHost) {
                 appendLog('ERROR: No hub host provided');
@@ -420,16 +421,17 @@
             }
             
             appendLog('Validation passed');
-            appendLog('Temporarily saving settings...');
+            appendLog('Saving settings before test...');
             
-            // Temporarily save settings for test
+            // Save ALL settings before testing (including wsPort)
             Homey.set('hubHost', settings.hubHost);
             Homey.set('hubPort', settings.hubPort);
             Homey.set('hubUser', settings.hubUser);
             Homey.set('hubPass', settings.hubPass);
             Homey.set('hubModel', settings.hubModel);
+            Homey.set('wsPort', settings.wsPort);
             
-            appendLog('Settings saved temporarily');
+            appendLog('Settings saved');
             appendLog('Calling Homey.api(GET, /test-connection)...');
             console.log('Calling Homey.api GET /test-connection...');
             

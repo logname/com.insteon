@@ -1,6 +1,6 @@
 {
   "id": "com.insteon",
-  "version": "1.7.4",
+  "version": "1.7.8",
   "compatibility": ">=12.2.0",
   "sdk": 3,
   "platforms": [
@@ -43,12 +43,11 @@
       },
       {
         "name": "Claude (Anthropic AI Assistant)",
-        "role": "Complete app development v1.0.0-v1.7.0: Groovy to Homey SDK 3 conversion, architecture design, all features and drivers"
+        "role": "Complete app development v1.0.0-v1.7.8: Groovy to Homey SDK 3 conversion, architecture design, all features and drivers"
       }
     ]
   },
-  "contributing": {
-  },
+  "contributing": {},
   "homeyCommunityTopicId": 151182,
   "source": "https://github.com/logname/com.insteon",
   "support": "https://github.com/logname/com.insteon/issues",
@@ -57,7 +56,7 @@
     "development": {
       "original_platform": "Hubitat Elevation",
       "conversion_by": "Claude (Anthropic AI)",
-      "conversion_date": "2025-02-12",
+      "conversion_date": "2026-02-12",
       "original_authors": [
         "cwwilson08 (Groovy drivers)",
         "Chris Wilson (Node.js server)"

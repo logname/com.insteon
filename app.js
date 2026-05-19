@@ -10,46 +10,52 @@ class InsteonApp extends Homey.App {
    * onInit is called when the app is initialized.
    */
   async onInit() {
-    this.log('Insteon app is running...');
+    try {
+      this.log('Insteon app is running...');
 
-    // Initialize state
-    this.hub = null;
-    this.wss = null;
-    this.connectedToHub = false;
-    this.connectingToHub = false;
-    this.reconnectDelay = 1;
-    this.devices = new Map();
-    this.devicesMapId = Math.random().toString(36).substr(2, 9); // Unique ID to track this Map
-    this.wsClients = new Set();
+      // Initialize state
+      this.hub = null;
+      this.wss = null;
+      this.connectedToHub = false;
+      this.connectingToHub = false;
+      this.reconnectDelay = 1;
+      this.devices = new Map();
+      this.devicesMapId = Math.random().toString(36).substr(2, 9); // Unique ID to track this Map
+      this.wsClients = new Set();
 
-    this.log(`Created devices Map with ID: ${this.devicesMapId}`);
-    this.debugLog(`========================================`);
-    this.debugLog(`APP INITIALIZED`);
-    this.debugLog(`  Devices Map ID: ${this.devicesMapId}`);
-    this.debugLog(`  Map size: ${this.devices.size}`);
-    this.debugLog(`========================================`);
+      this.log(`Created devices Map with ID: ${this.devicesMapId}`);
+      this.debugLog(`========================================`);
+      this.debugLog(`APP INITIALIZED`);
+      this.debugLog(`  Devices Map ID: ${this.devicesMapId}`);
+      this.debugLog(`  Map size: ${this.devices.size}`);
+      this.debugLog(`========================================`);
 
-    // Get app settings
-    this.settings = this.homey.settings;
+      // Get app settings
+      this.settings = this.homey.settings;
 
-    // Initialize hub connection
-    await this.initializeHub();
+      // Initialize hub connection
+      await this.initializeHub();
 
-    // Initialize WebSocket server
-    await this.initializeWebSocketServer();
+      // Initialize WebSocket server
+      await this.initializeWebSocketServer();
 
-    // Register flow cards
-    this.registerFlowCards();
+      // Register flow cards
+      this.registerFlowCards();
 
-    // Listen for settings changes
-    this.settings.on('set', (key) => {
-      this.log(`Setting changed: ${key}`);
-      if (['hubHost', 'hubPort', 'hubUser', 'hubPass', 'hubModel'].includes(key)) {
-        this.reconnectToHub();
-      }
-    });
+      // Listen for settings changes
+      this.settings.on('set', (key) => {
+        this.log(`Setting changed: ${key}`);
+        if (['hubHost', 'hubPort', 'hubUser', 'hubPass', 'hubModel'].includes(key)) {
+          this.reconnectToHub();
+        }
+      });
 
-    this.log('Insteon app initialized successfully');
+      this.log('Insteon app initialized successfully');
+    } catch (error) {
+      this.error('❌ CRITICAL ERROR during app initialization:', error);
+      this.error('App will attempt to continue but may have limited functionality');
+      // DON'T THROW - app should stay running even if init fails
+    }
   }
 
   /**
@@ -461,8 +467,42 @@ class InsteonApp extends Homey.App {
   async initializeWebSocketServer() {
     const wsPort = this.settings.get('wsPort') || 8080;
 
+    // Close existing WebSocket server if it exists
+    if (this.wss) {
+      this.log('Closing existing WebSocket server...');
+      try {
+        this.wss.close();
+        this.wsClients.clear();
+      } catch (closeError) {
+        this.error('Error closing existing WebSocket server:', closeError);
+      }
+      this.wss = null;
+    }
+
+    this.log(`Attempting to start WebSocket server on port ${wsPort}...`);
+    
     try {
-      this.wss = new WebSocket.Server({ port: wsPort });
+      // ✅ CRITICAL: Create WebSocket server INSIDE try-catch to catch EADDRINUSE
+      // Some versions of 'ws' throw synchronously, others emit 'error' event
+      const wss = new WebSocket.Server({ 
+        port: wsPort,
+        clientTracking: true
+      });
+      
+      // Handle server errors that might occur during or after creation
+      wss.on('error', (error) => {
+        if (error.code === 'EADDRINUSE') {
+          this.error(`❌ WebSocket port ${wsPort} is already in use`);
+          this.error(`  Solution: Change wsPort to ${wsPort + 1} in app settings`);
+          this.error(`  Or restart Homey to free up port ${wsPort}`);
+          this.wss = null;
+        } else {
+          this.error('WebSocket server error:', error);
+        }
+      });
+      
+      // Only assign to this.wss if creation succeeds
+      this.wss = wss;
 
       this.wss.on('connection', (ws) => {
         this.log('WebSocket client connected');
@@ -492,13 +532,28 @@ class InsteonApp extends Homey.App {
         });
 
         ws.on('error', (error) => {
-          this.error('WebSocket error:', error);
+          this.error('WebSocket client error:', error);
         });
       });
 
-      this.log(`WebSocket server started on port ${wsPort}`);
+      this.log(`✓ WebSocket server started successfully on port ${wsPort}`);
     } catch (error) {
-      this.error('Failed to start WebSocket server:', error);
+      this.error('❌ Failed to start WebSocket server:', error.message);
+      
+      // Provide helpful error message for EADDRINUSE
+      if (error.code === 'EADDRINUSE') {
+        this.error(`Port ${wsPort} is already in use. This usually means:`);
+        this.error(`  1. Another app is using port ${wsPort}`);
+        this.error(`  2. A previous instance didn't shut down properly`);
+        this.error(`  3. Change wsPort in app settings to a different port (e.g., 8081, 8082)`);
+        this.error(`App will continue without WebSocket server - devices will still work.`);
+      }
+      
+      // Set wss to null so app knows WebSocket is not available
+      this.wss = null;
+      
+      // ✅ DON'T THROW - let app continue without WebSocket
+      // WebSocket is optional, app can still control devices without it
     }
   }
 
@@ -509,20 +564,30 @@ class InsteonApp extends Homey.App {
     // Scene Actions (triggers/conditions removed - hub doesn't report scene events)
     this.homey.flow.getActionCard('turn_on_scene')
       .registerRunListener(async (args) => {
-        const sceneNumber = args.number;
-        const scenePadded = sceneNumber.toString().padStart(2, '0');
-        const command = `11${scenePadded}`; // ON command
-        this.log(`Flow: Turn ON scene ${sceneNumber} (${command})`);
-        await this.sendSceneCommand(command);
+        try {
+          const sceneNumber = args.number;
+          const scenePadded = sceneNumber.toString().padStart(2, '0');
+          const command = `11${scenePadded}`; // ON command
+          this.log(`Flow: Turn ON scene ${sceneNumber} (${command})`);
+          await this.sendSceneCommand(command);
+        } catch (error) {
+          this.error(`Flow card error (turn on scene): ${error.message}`);
+          // ✅ Don't throw - prevents crash
+        }
       });
 
     this.homey.flow.getActionCard('turn_off_scene')
       .registerRunListener(async (args) => {
-        const sceneNumber = args.number;
-        const scenePadded = sceneNumber.toString().padStart(2, '0');
-        const command = `13${scenePadded}`; // OFF command
-        this.log(`Flow: Turn OFF scene ${sceneNumber} (${command})`);
-        await this.sendSceneCommand(command);
+        try {
+          const sceneNumber = args.number;
+          const scenePadded = sceneNumber.toString().padStart(2, '0');
+          const command = `13${scenePadded}`; // OFF command
+          this.log(`Flow: Turn OFF scene ${sceneNumber} (${command})`);
+          await this.sendSceneCommand(command);
+        } catch (error) {
+          this.error(`Flow card error (turn off scene): ${error.message}`);
+          // ✅ Don't throw - prevents crash
+        }
       });
   }
 
@@ -783,7 +848,12 @@ class InsteonApp extends Homey.App {
    * Test connection to hub (called from settings page via API)
    */
   async testConnection() {
-    this.log('Testing hub connection from settings page...');
+    this.log('Testing hub connection and WebSocket port from settings page...');
+    
+    const results = {
+      hub: null,
+      websocket: null
+    };
 
     try {
       // Get hub settings
@@ -792,6 +862,7 @@ class InsteonApp extends Homey.App {
       const hubUser = this.homey.settings.get('hubUser') || '';
       const hubPass = this.homey.settings.get('hubPass') || '';
       const hubModel = this.homey.settings.get('hubModel') || '2245';
+      const wsPort = this.homey.settings.get('wsPort') || 8080;
 
       // Validate settings
       if (!hubHost) {
@@ -802,15 +873,14 @@ class InsteonApp extends Homey.App {
         return { success: false, error: 'Hub 2245 requires username and password' };
       }
 
-      // Try a simple HTTP request to the hub
+      // TEST 1: Hub connection
+      this.log(`Testing hub connection to: ${hubHost}:${hubPort}`);
       const http = require('http');
       const testUrl = hubUser && hubPass
         ? `http://${hubUser}:${hubPass}@${hubHost}:${hubPort}/`
         : `http://${hubHost}:${hubPort}/`;
 
-      this.log(`Testing connection to: ${hubHost}:${hubPort}`);
-
-      const result = await new Promise((resolve) => {
+      results.hub = await new Promise((resolve) => {
         const urlObj = new URL(testUrl);
         const options = {
           hostname: urlObj.hostname,
@@ -828,21 +898,19 @@ class InsteonApp extends Homey.App {
 
         const req = http.request(options, (res) => {
           this.log(`Hub responded with status: ${res.statusCode}`);
-          // Any response (even errors) means the hub is reachable
-          resolve({ success: true });
+          resolve({ success: true, message: 'Hub reachable' });
         });
 
         req.on('error', (error) => {
           this.error('Hub connection test failed:', error.message);
           let errorMessage = error.message;
 
-          // Provide user-friendly error messages
           if (error.code === 'EHOSTUNREACH') {
             errorMessage = 'Hub unreachable. Check IP address and network connection.';
           } else if (error.code === 'ETIMEDOUT') {
-            errorMessage = 'Connection timeout. Hub may be offline or IP address is incorrect.';
+            errorMessage = 'Connection timeout. Hub may be offline.';
           } else if (error.code === 'ECONNREFUSED') {
-            errorMessage = 'Connection refused. Check port number (default: 25105).';
+            errorMessage = 'Connection refused. Check port number.';
           } else if (error.code === 'ENOTFOUND') {
             errorMessage = 'Hub not found. Check IP address.';
           }
@@ -852,14 +920,66 @@ class InsteonApp extends Homey.App {
 
         req.on('timeout', () => {
           req.destroy();
-          resolve({ success: false, error: 'Connection timeout. Hub may be offline or unreachable.' });
+          resolve({ success: false, error: 'Connection timeout.' });
         });
 
         req.end();
       });
 
-      this.log('Test connection result:', result);
-      return result;
+      // TEST 2: WebSocket port availability
+      this.log(`Testing WebSocket port: ${wsPort}`);
+      const net = require('net');
+      
+      results.websocket = await new Promise((resolve) => {
+        const testServer = net.createServer();
+        
+        testServer.once('error', (err) => {
+          if (err.code === 'EADDRINUSE') {
+            this.error(`Port ${wsPort} is already in use`);
+            resolve({ 
+              success: false, 
+              error: `Port ${wsPort} is in use. Try port ${wsPort + 1} or restart Homey.` 
+            });
+          } else {
+            resolve({ success: false, error: err.message });
+          }
+        });
+        
+        testServer.once('listening', () => {
+          testServer.close(() => {
+            this.log(`Port ${wsPort} is available`);
+            resolve({ success: true, message: `Port ${wsPort} available` });
+          });
+        });
+        
+        testServer.listen(wsPort);
+      });
+
+      // Combine results
+      const hubSuccess = results.hub.success;
+      const wsSuccess = results.websocket.success;
+      
+      if (hubSuccess && wsSuccess) {
+        return { 
+          success: true, 
+          message: 'Hub connection OK. WebSocket port OK.' 
+        };
+      } else if (hubSuccess && !wsSuccess) {
+        return { 
+          success: false, 
+          error: `Hub OK, but ${results.websocket.error}` 
+        };
+      } else if (!hubSuccess && wsSuccess) {
+        return { 
+          success: false, 
+          error: `WebSocket port OK, but hub: ${results.hub.error}` 
+        };
+      } else {
+        return { 
+          success: false, 
+          error: `Hub: ${results.hub.error}. WebSocket: ${results.websocket.error}` 
+        };
+      }
 
     } catch (error) {
       this.error('Test connection error:', error);
