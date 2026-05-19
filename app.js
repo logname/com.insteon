@@ -482,6 +482,7 @@ class InsteonApp extends Homey.App {
     this.log(`Attempting to start WebSocket server on port ${wsPort}...`);
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     
     try {
       // ✅ CRITICAL: Create WebSocket server INSIDE try-catch to catch EADDRINUSE
@@ -502,12 +503,21 @@ class InsteonApp extends Homey.App {
       // ✅ CRITICAL: Create WebSocket server INSIDE try-catch to catch EADDRINUSE
       // Some versions of 'ws' throw synchronously, others emit 'error' event
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
+
+    try {
+      // ✅ CRITICAL: Create WebSocket server INSIDE try-catch to catch EADDRINUSE
+      // Some versions of 'ws' throw synchronously, others emit 'error' event
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
       const wss = new WebSocket.Server({
         port: wsPort,
         clientTracking: true
       });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -524,7 +534,11 @@ class InsteonApp extends Homey.App {
       });
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -571,7 +585,11 @@ class InsteonApp extends Homey.App {
       this.error('❌ Failed to start WebSocket server:', error.message);
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -588,6 +606,7 @@ class InsteonApp extends Homey.App {
       }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       
       // Set wss to null so app knows WebSocket is not available
       this.wss = null;
@@ -595,11 +614,16 @@ class InsteonApp extends Homey.App {
 =======
 =======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 
       // Set wss to null so app knows WebSocket is not available
       this.wss = null;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -902,7 +926,11 @@ class InsteonApp extends Homey.App {
     this.log('Testing hub connection and WebSocket port from settings page...');
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -990,6 +1018,7 @@ class InsteonApp extends Homey.App {
       const net = require('net');
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       
       results.websocket = await new Promise((resolve) => {
         const testServer = net.createServer();
@@ -1003,6 +1032,8 @@ class InsteonApp extends Homey.App {
 =======
 =======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 
       results.websocket = await new Promise((resolve) => {
         const testServer = net.createServer();
@@ -1014,6 +1045,9 @@ class InsteonApp extends Homey.App {
               success: false,
               error: `Port ${wsPort} is in use. Try port ${wsPort + 1} or restart Homey.`
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -1024,7 +1058,11 @@ class InsteonApp extends Homey.App {
         });
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -1039,7 +1077,11 @@ class InsteonApp extends Homey.App {
         });
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -1052,6 +1094,7 @@ class InsteonApp extends Homey.App {
       // Combine results
       const hubSuccess = results.hub.success;
       const wsSuccess = results.websocket.success;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
       
@@ -1077,6 +1120,8 @@ class InsteonApp extends Homey.App {
 =======
 =======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 
       if (hubSuccess && wsSuccess) {
         return {
@@ -1098,6 +1143,9 @@ class InsteonApp extends Homey.App {
           success: false,
           error: `Hub: ${results.hub.error}. WebSocket: ${results.websocket.error}`
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
+=======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728

@@ -37,8 +37,12 @@ class InsteonSceneDevice extends Device {
       if (!sceneNumber) {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.error('Scene number not configured');
         return false; // ✅ Don't throw
+=======
+        throw new Error('Scene number not configured');
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
         throw new Error('Scene number not configured');
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
@@ -70,7 +74,13 @@ class InsteonSceneDevice extends Device {
       this.error(`Failed to control scene: ${error.message}`);
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       return false; // ✅ Don't throw - prevents crash
+=======
+      // Don't throw - log error but don't crash app
+      // User will see scene didn't activate but device stays functional
+      return false;
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
       // Don't throw - log error but don't crash app
       // User will see scene didn't activate but device stays functional

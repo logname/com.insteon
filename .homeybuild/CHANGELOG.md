@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## [1.7.8] - 2026-05-18
 
 ### Fixed
@@ -20,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - scene/device.js: Added try-catch to onCapabilityOnOff
 - app.js: Flow cards now have try-catch
 
+=======
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
 >>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
 =======
