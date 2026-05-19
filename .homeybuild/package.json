@@ -1,6 +1,10 @@
 {
   "name": "com.insteon",
+<<<<<<< HEAD
   "version": "1.7.8",
+=======
+  "version": "1.7.7",
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
   "description": "Control Insteon devices via Insteon Hub on Homey Pro",
   "main": "app.js",
   "author": "Douglas Krug",
@@ -18,7 +22,7 @@
     "ws": "^8.16.0"
   },
   "devDependencies": {
-    "homey": "^4.0.11"
+    "homey": "^4.2.0"
   },
   "engines": {
     "node": ">=16.0.0"

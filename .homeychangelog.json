@@ -5,7 +5,15 @@
   "1.7.4": {
     "en": "Updated driver and app images"
   },
+<<<<<<< HEAD
   "1.7.8": {
     "en": "Bug Fix - Missing error handling from previous build"
+=======
+  "1.7.6": {
+    "en": "Resolve app crash by home-controller library when wrong credentials entered for Hub 2245"
+  },
+  "1.7.7": {
+    "en": "Enhanced webSocket error handling"
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
   }
 }

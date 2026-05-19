@@ -35,8 +35,12 @@ class InsteonSceneDevice extends Device {
       const fastCommands = settings.fastCommands || false;
 
       if (!sceneNumber) {
+<<<<<<< HEAD
         this.error('Scene number not configured');
         return false; // ✅ Don't throw
+=======
+        throw new Error('Scene number not configured');
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
       }
 
       // Pad scene number to 2 digits
@@ -60,7 +64,13 @@ class InsteonSceneDevice extends Device {
       return true;
     } catch (error) {
       this.error(`Failed to control scene: ${error.message}`);
+<<<<<<< HEAD
       return false; // ✅ Don't throw - prevents crash
+=======
+      // Don't throw - log error but don't crash app
+      // User will see scene didn't activate but device stays functional
+      return false;
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
     }
   }
 

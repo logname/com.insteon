@@ -2,7 +2,7 @@
 
 Control your Insteon devices directly through Homey Pro via Insteon Hub (models 2245/2242).
 
-[![Version](https://img.shields.io/badge/version-1.7.0-blue.svg)](https://github.com/logname/com.insteon)
+[![Version](https://img.shields.io/badge/version-1.7.6-blue.svg)](https://github.com/logname/com.insteon)
 [![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)](LICENSE)
 [![Homey](https://img.shields.io/badge/Homey-12.2.0+-purple.svg)](https://homey.app)
 
@@ -212,6 +212,18 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for full development guide.
 See [TECHNICAL.md](TECHNICAL.md) for implementation details.
 
 ## Complete Changelog
+
+### v1.7.6 (2025-03-19) - 401 Crash Fix ✅
+- **Fixed 401 Unauthorized crashes**
+- Wrapped home-controller library calls in try-catch
+- Wrong credentials now log error instead of crashing
+- App schedules reconnect on authentication failure
+
+### v1.7.5 (2025-03-19) - Comprehensive Crash Prevention
+- Flow card error handling
+- Device capability error handling  
+- User-friendly error messages
+- See CHANGELOG-v1.7.5.md for full details
 
 ### v1.7.0 (2025-03-17) - Test Connection WORKING! ✅
 - **THE FIX**: Added missing `api` section to app.json

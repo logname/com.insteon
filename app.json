@@ -1,6 +1,10 @@
 {
   "id": "com.insteon",
+<<<<<<< HEAD
   "version": "1.7.8",
+=======
+  "version": "1.7.7",
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
   "compatibility": ">=12.2.0",
   "sdk": 3,
   "platforms": [

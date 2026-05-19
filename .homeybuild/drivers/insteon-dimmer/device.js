@@ -367,8 +367,21 @@ class InsteonDimmerDevice extends Homey.Device {
         });
 
         req.on('error', (error) => {
-          this.error('HTTP request error:', error.message);
-          reject(error);
+          let errorMessage = error.message;
+          
+          // Provide user-friendly error messages
+          if (error.code === 'EHOSTUNREACH') {
+            errorMessage = 'Hub unreachable. Check hub is powered on and network connection.';
+          } else if (error.code === 'ETIMEDOUT') {
+            errorMessage = 'Connection timeout. Hub may be offline.';
+          } else if (error.code === 'ECONNREFUSED') {
+            errorMessage = 'Connection refused. Check hub port number.';
+          } else if (error.code === 'ENOTFOUND') {
+            errorMessage = 'Hub not found. Check IP address in app settings.';
+          }
+          
+          this.error('HTTP request error:', errorMessage);
+          reject(new Error(errorMessage));
         });
 
         req.on('timeout', () => {

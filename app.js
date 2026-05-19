@@ -480,6 +480,7 @@ class InsteonApp extends Homey.App {
     }
 
     this.log(`Attempting to start WebSocket server on port ${wsPort}...`);
+<<<<<<< HEAD
     
     try {
       // ✅ CRITICAL: Create WebSocket server INSIDE try-catch to catch EADDRINUSE
@@ -489,6 +490,17 @@ class InsteonApp extends Homey.App {
         clientTracking: true
       });
       
+=======
+
+    try {
+      // ✅ CRITICAL: Create WebSocket server INSIDE try-catch to catch EADDRINUSE
+      // Some versions of 'ws' throw synchronously, others emit 'error' event
+      const wss = new WebSocket.Server({
+        port: wsPort,
+        clientTracking: true
+      });
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
       // Handle server errors that might occur during or after creation
       wss.on('error', (error) => {
         if (error.code === 'EADDRINUSE') {
@@ -500,7 +512,11 @@ class InsteonApp extends Homey.App {
           this.error('WebSocket server error:', error);
         }
       });
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
       // Only assign to this.wss if creation succeeds
       this.wss = wss;
 
@@ -539,7 +555,11 @@ class InsteonApp extends Homey.App {
       this.log(`✓ WebSocket server started successfully on port ${wsPort}`);
     } catch (error) {
       this.error('❌ Failed to start WebSocket server:', error.message);
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
       // Provide helpful error message for EADDRINUSE
       if (error.code === 'EADDRINUSE') {
         this.error(`Port ${wsPort} is already in use. This usually means:`);
@@ -548,10 +568,17 @@ class InsteonApp extends Homey.App {
         this.error(`  3. Change wsPort in app settings to a different port (e.g., 8081, 8082)`);
         this.error(`App will continue without WebSocket server - devices will still work.`);
       }
+<<<<<<< HEAD
       
       // Set wss to null so app knows WebSocket is not available
       this.wss = null;
       
+=======
+
+      // Set wss to null so app knows WebSocket is not available
+      this.wss = null;
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
       // ✅ DON'T THROW - let app continue without WebSocket
       // WebSocket is optional, app can still control devices without it
     }
@@ -849,7 +876,11 @@ class InsteonApp extends Homey.App {
    */
   async testConnection() {
     this.log('Testing hub connection and WebSocket port from settings page...');
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
     const results = {
       hub: null,
       websocket: null
@@ -929,6 +960,7 @@ class InsteonApp extends Homey.App {
       // TEST 2: WebSocket port availability
       this.log(`Testing WebSocket port: ${wsPort}`);
       const net = require('net');
+<<<<<<< HEAD
       
       results.websocket = await new Promise((resolve) => {
         const testServer = net.createServer();
@@ -939,25 +971,46 @@ class InsteonApp extends Homey.App {
             resolve({ 
               success: false, 
               error: `Port ${wsPort} is in use. Try port ${wsPort + 1} or restart Homey.` 
+=======
+
+      results.websocket = await new Promise((resolve) => {
+        const testServer = net.createServer();
+
+        testServer.once('error', (err) => {
+          if (err.code === 'EADDRINUSE') {
+            this.error(`Port ${wsPort} is already in use`);
+            resolve({
+              success: false,
+              error: `Port ${wsPort} is in use. Try port ${wsPort + 1} or restart Homey.`
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
             });
           } else {
             resolve({ success: false, error: err.message });
           }
         });
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
         testServer.once('listening', () => {
           testServer.close(() => {
             this.log(`Port ${wsPort} is available`);
             resolve({ success: true, message: `Port ${wsPort} available` });
           });
         });
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
         testServer.listen(wsPort);
       });
 
       // Combine results
       const hubSuccess = results.hub.success;
       const wsSuccess = results.websocket.success;
+<<<<<<< HEAD
       
       if (hubSuccess && wsSuccess) {
         return { 
@@ -978,6 +1031,28 @@ class InsteonApp extends Homey.App {
         return { 
           success: false, 
           error: `Hub: ${results.hub.error}. WebSocket: ${results.websocket.error}` 
+=======
+
+      if (hubSuccess && wsSuccess) {
+        return {
+          success: true,
+          message: 'Hub connection OK. WebSocket port OK.'
+        };
+      } else if (hubSuccess && !wsSuccess) {
+        return {
+          success: false,
+          error: `Hub OK, but ${results.websocket.error}`
+        };
+      } else if (!hubSuccess && wsSuccess) {
+        return {
+          success: false,
+          error: `WebSocket port OK, but hub: ${results.hub.error}`
+        };
+      } else {
+        return {
+          success: false,
+          error: `Hub: ${results.hub.error}. WebSocket: ${results.websocket.error}`
+>>>>>>> eab423494379311a69ccccb92a84ed5ca2bfb728
         };
       }
 
